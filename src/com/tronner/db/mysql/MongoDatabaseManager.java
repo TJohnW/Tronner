@@ -8,5 +8,4 @@ package com.tronner.db.mysql;
 public class MongoDatabaseManager {
 
 
-
 }
