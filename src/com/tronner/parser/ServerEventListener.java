@@ -1,15 +1,10 @@
 package com.tronner.parser;
 
-import java.awt.event.MouseAdapter;
-import java.net.InetAddress;
-
 /**
  *
  * @author TJohnW
  */
 public abstract class ServerEventListener {
-
-    public abstract void registerListeners();
 
     /**
      * Called on every second as a game tick
@@ -33,7 +28,5 @@ public abstract class ServerEventListener {
      * @param newName the new name
      */
     public void PLAYER_RENAMED(String oldName, String newName) {}
-
-
 
 }

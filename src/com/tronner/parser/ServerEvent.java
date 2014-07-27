@@ -14,19 +14,19 @@ public abstract class ServerEvent {
     protected List<ServerEventListener> listeners = new ArrayList<>();
 
     /**
-     * Adds a listener to this server event.
-     * @param sel the ServerEventListener to add
+     * Adds a listener to this server input.
+     * @param il the ServerEventListener to add
      */
-    public void addListener(ServerEventListener sel) {
-        listeners.add(sel);
+    public void addListener(ServerEventListener il) {
+        listeners.add(il);
     }
 
     /**
-     * Removes a listener from this server event.
-     * @param sel the ServerEventListener to remove
+     * Removes a listener from this server input.
+     * @param il the ServerEventListener to remove
      */
-    public void removeListener(ServerEventListener sel) {
-        listeners.remove(sel);
+    public void removeListener(ServerEventListener il) {
+        listeners.remove(il);
     }
 
     /**
@@ -34,15 +34,15 @@ public abstract class ServerEvent {
      * @param args the arguments passed after the command
      */
     public void onEvent(String... args) {
-        for(ServerEventListener sel: listeners)
-            onEvent(sel, args);
+        for(ServerEventListener il: listeners)
+            onEvent(il, args);
     }
 
     /**
      * Handled by all of the ServerEvent extended classes for ladderlog events.
-     * @param sel the ServerEventListener to call the command on
+     * @param il the InputListener to call the command on
      * @param args the arguments passed after the command
      */
-    public abstract void onEvent(ServerEventListener sel, String... args);
+    public abstract void onEvent(ServerEventListener il, String... args);
 
 }

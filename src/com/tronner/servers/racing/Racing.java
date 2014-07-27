@@ -1,6 +1,5 @@
-package com.tronner.racing;
+package com.tronner.servers.racing;
 
-import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
 
 /**
@@ -9,13 +8,6 @@ import com.tronner.parser.ServerEventListener;
  * @author TJohnW
  */
 public class Racing extends ServerEventListener {
-
-    @Override
-    public void registerListeners() {
-        Parser.GAME_TIME.addListener(this);
-        Parser.CYCLE_CREATED.addListener(this);
-        Parser.PLAYER_RENAMED.addListener(this);
-    }
 
     @Override
     public void GAME_TIME(int time) {
@@ -31,5 +23,6 @@ public class Racing extends ServerEventListener {
     public void PLAYER_RENAMED(String oldName, String newName) {
         System.out.println("Someone renamed!");
     }
+
 
 }
