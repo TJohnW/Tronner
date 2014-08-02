@@ -22,20 +22,17 @@
  * SOFTWARE.
  */
 
-package com.tronner.parser.events;
-
-import com.tronner.parser.ServerEvent;
-import com.tronner.parser.ServerEventListener;
+package com.tronner.dispatcher;
 
 /**
- * Tronner - CYCLE_CREATED
+ * Tronner - Dispatcher
+ *
+ * This will handle remote commands from external sources,
+ * Mainly the web site.
  *
  * @author TJohnW
  */
-public class CYCLE_CREATED extends ServerEvent {
+public class Dispatcher {
 
-    @Override
-    public void onEvent(ServerEventListener sel, String... args) {
-        sel.CYCLE_CREATED(args[0], Float.parseFloat(args[1]), Float.parseFloat(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]));
-    }
+
 }

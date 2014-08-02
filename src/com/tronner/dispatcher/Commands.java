@@ -22,20 +22,34 @@
  * SOFTWARE.
  */
 
-package com.tronner.parser.events;
-
-import com.tronner.parser.ServerEvent;
-import com.tronner.parser.ServerEventListener;
+package com.tronner.dispatcher;
 
 /**
- * Tronner - CYCLE_CREATED
+ * Tronner - Commands
+ *
+ * The commonly used Commands, will create more files for more specific
+ * needs if needed.
  *
  * @author TJohnW
  */
-public class CYCLE_CREATED extends ServerEvent {
+public class Commands {
 
-    @Override
-    public void onEvent(ServerEventListener sel, String... args) {
-        sel.CYCLE_CREATED(args[0], Float.parseFloat(args[1]), Float.parseFloat(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]));
+    /**
+     * Writes to the server, depending on the configuration.
+     * Could be cmd.txt but usually is just STDOUT.
+     * @param output The string to write.
+     */
+    public static void out(String output) {
+        System.out.println(output); // for now.
     }
+
+    /**
+     * Writes a commend to the Plugin log file.
+     * @param commentInformation The string to comment.
+     */
+    public static void comment(String commentInformation) {
+
+    }
+
+
 }

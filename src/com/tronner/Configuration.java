@@ -22,20 +22,37 @@
  * SOFTWARE.
  */
 
-package com.tronner.parser.events;
-
-import com.tronner.parser.ServerEvent;
-import com.tronner.parser.ServerEventListener;
+package com.tronner;
 
 /**
- * Tronner - CYCLE_CREATED
+ * Tronner - Configuration
  *
  * @author TJohnW
  */
-public class CYCLE_CREATED extends ServerEvent {
+public class Configuration {
 
-    @Override
-    public void onEvent(ServerEventListener sel, String... args) {
-        sel.CYCLE_CREATED(args[0], Float.parseFloat(args[1]), Float.parseFloat(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]));
-    }
+    /**
+     * The name of the server plugin to load.
+     * Should be the name of a Class that is located
+     * in the lower case of the package. Example.
+     * com.tronner.servers.racing.Racing.java
+     * Would be loaded by server being Racing
+     */
+    public String server;
+
+    /**
+     * The database to use
+     */
+    public String db_name;
+
+    /**
+     * The database username
+     */
+    public String db_user;
+
+    /**
+     * The database password
+     */
+    public String db_pass;
+
 }
