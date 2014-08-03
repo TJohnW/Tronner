@@ -24,27 +24,13 @@
 
 package com.tronner.servers.racing;
 
-import com.tronner.parser.ServerEventListener;
-
 /**
- * Tronner - Racing
+ * Tronner - RoundManager
  *
  * @author TJohnW
  */
-public class Racing extends ServerEventListener {
+public class RoundManager {
 
-    public static final String PATH = "";
 
-    private LogManager logger = new LogManager();
-
-    @Override
-    public void GAME_TIME(int time) {
-        System.out.println("Time!!!");
-    }
-
-    @Override
-    public void CYCLE_CREATED(String playerName, float xPosition, float yPosition, int xDirection, int yDirection) {
-        System.out.println("A cycle was created at x= " + xPosition + " y= " + yPosition);
-    }
 
 }

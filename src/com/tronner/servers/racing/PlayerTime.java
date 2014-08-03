@@ -32,6 +32,11 @@ package com.tronner.servers.racing;
 public class PlayerTime {
 
     /**
+     * Here to help improve caching of ranks
+     */
+    private transient int rank;
+
+    /**
      * The players time
      */
     private double time;
@@ -52,11 +57,35 @@ public class PlayerTime {
     }
 
     /**
+     * Sets this rank
+     * @param newRank the rank to set
+     */
+    public void setRank(int newRank) {
+        rank = newRank;
+    }
+
+    /**
+     * Gets this rank
+     * @return the rank
+     */
+    public int getRank() {
+        return rank;
+    }
+
+    /**
      * Updates the time of this PlayerTime
      * @param newTime the new time
      */
     public void setTime(double newTime) {
         time = newTime;
+    }
+
+    /**
+     * Gets the time.
+     * @return the time
+     */
+    public double getTime() {
+        return time;
     }
 
     /**
@@ -73,14 +102,6 @@ public class PlayerTime {
      */
     public String getPlayer() {
         return player;
-    }
-
-    /**
-     * Gets the time.
-     * @return the time
-     */
-    public double getTime() {
-        return time;
     }
 
     /**

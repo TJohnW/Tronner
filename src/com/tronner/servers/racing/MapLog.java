@@ -24,10 +24,8 @@
 
 package com.tronner.servers.racing;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+
+import java.util.*;
 
 /**
  * Tronner - MapLog
@@ -57,13 +55,29 @@ public class MapLog {
     private List<PlayerTime> records = new ArrayList<>();
 
     /**
+     * Here to speed up finding a players rank
+     */
+    private transient Map<String, PlayerTime> ranks = new HashMap<>();
+
+    /**
      * This creates an empty MapLog with the given name.
      * This should only be used to create logs for maps that dont
      * have logs yet.
      * @param mapName the name of the map to create a log for.
      */
-    public MapLog(String mapName) {
-        map = mapName;
+    public MapLog(String mapName) { map = mapName; }
+
+    /**
+     * Here to speed up quick access of the players ranks
+     * at the start of the round and when loaded into memory
+     */
+    public void cache() {
+        ranks = new HashMap<>();
+        for(int i = 0; i < records.size(); i++) {
+            PlayerTime pt = records.get(i);
+            pt.setRank(i+1);
+            ranks.put(pt.getPlayer(), pt);
+        }
     }
 
     /**
@@ -71,6 +85,7 @@ public class MapLog {
      */
     public void sort() {
         Collections.sort(records, comparator);
+        cache();
     }
 
     /**
@@ -79,12 +94,10 @@ public class MapLog {
      * @return the rank of the player on this MapLog
      */
     public int getRank(String playerId) {
-        return getRank(new PlayerTime(playerId, -1));
-    }
-
-    public int getRank(PlayerTime playerTime) {
-        int rank = records.indexOf(playerTime);
-        return (rank == -1) ? rank : rank + 1;
+        PlayerTime pt = ranks.get(playerId);
+        if(pt != null)
+            return pt.getRank();
+        return -1;
     }
 
     /**
@@ -94,14 +107,32 @@ public class MapLog {
      * @param playerTime The PlayerTime object to update
      */
     public int updateRecord(PlayerTime playerTime) {
-        int index = records.indexOf(playerTime);
-        if(index != -1) {
-            records.get(index).setTime(playerTime.getTime());
+        // Fancy caching help here
+        if(ranks.containsKey(playerTime.getPlayer())) {
+            if(playerTime.getTime() < ranks.get(playerTime.getPlayer()).getTime()) {
+                ranks.get(playerTime.getPlayer()).setTime(playerTime.getTime());
+            } else {
+                // no change in this players rank, lets not re sort
+                return getRank(playerTime.getPlayer());
+            }
         } else {
             records.add(playerTime);
         }
         sort();
-        return getRank(playerTime);
+        return getRank(playerTime.getPlayer());
+    }
+
+    /**
+     * Called to rename a record in the this MapLog
+     * @param playerId the player to rename
+     * @param newPlayerId the new name
+     * @return true on success
+     */
+    public boolean renameRecord(String playerId, String newPlayerId) {
+        if(!ranks.containsKey(playerId))
+            return false;
+        ranks.get(playerId).setPlayer(newPlayerId);
+        return true;
     }
 
 }

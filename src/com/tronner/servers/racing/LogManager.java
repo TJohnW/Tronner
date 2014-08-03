@@ -24,15 +24,9 @@
 
 package com.tronner.servers.racing;
 
-import com.google.gson.Gson;
+import com.tronner.util.JsonManager;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,18 +40,6 @@ public class LogManager {
     private Map<String, MapLog> mapLogs = new HashMap<>();
 
     public LogManager() {
-        /**
-        MapLog ml = new MapLog("Aflac");
-
-        for(int i = 0; i < 1700; i++) {
-            ml.updateRecord(new PlayerTime("Smart", 12 + i/100));
-        }
-
-        ml.sort();
-        setLog("Aflac", ml);
-        saveMapLog("Aflac");
-        */
-        loadMapLog("Telepo");
 
     }
 
@@ -81,16 +63,28 @@ public class LogManager {
     }
 
     /**
+     * Default behavior for loadMapLog
+     * @param mapName the map to load the log for.
+     */
+    public void loadMapLog(String mapName) {
+        loadMapLog(mapName, true);
+    }
+
+    /**
      * Loads the MapLog for the given mapName
      * if the log does not exist doesnt add to map
      * @param mapName the map to load the log for.
      */
-    public void loadMapLog(String mapName) {
+    public void loadMapLog(String mapName, boolean createOnFail) {
         try {
-            byte[] encoded = Files.readAllBytes(Paths.get(Racing.path() + "data/" + mapName + ".JSON"));
-            Gson g = new Gson();
-            mapLogs.put(mapName, g.fromJson(new String(encoded, StandardCharsets.UTF_8), MapLog.class));
+            mapLogs.put(mapName, JsonManager.loadFromJson(Racing.PATH + "data/maplogs/" + mapName + ".JSON",
+                    MapLog.class));
+            mapLogs.get(mapName).sort();
         } catch (IOException e) {
+            if(!createOnFail) {
+                System.out.println("Error loading MapLog, finished");
+                return;
+            }
             System.out.println("Error loading MapLog for map, attempting to create it: " + mapName);
             MapLog ml = new MapLog(mapName);
             mapLogs.put(mapName, ml);
@@ -105,26 +99,10 @@ public class LogManager {
      */
     public void saveMapLog(String mapName) {
         try {
-            BufferedWriter output = new BufferedWriter(new FileWriter(new File(Racing.path() + "data/" + mapName + ".JSON")));
-            //Gson g = new GsonBuilder().setPrettyPrinting().create();
-            Gson g = new Gson();
-            output.write(g.toJson(mapLogs.get(mapName)));
-            output.close();
+            JsonManager.saveAsJson(Racing.PATH + "data/maplogs/" + mapName + ".JSON", mapLogs.get(mapName));
         } catch (IOException e) {
             System.out.println("Unable to save MapLog for map: " + mapName);
         }
-    }
-
-    /**
-     * Returns the rank of the player based on the list for the
-     * specified map.
-     * ACCOUNTS FOR INDEXES STARTING AT 0!
-     * @param map the map to search
-     * @param playerId the player to find
-     * @return the rank of the player
-     */
-    public int getRank(String map, Player playerId) {
-        return getRank(map, playerId.getId());
     }
 
     /**
@@ -135,8 +113,13 @@ public class LogManager {
      * @return the players rank.
      */
     public int getRank(String map, String playerId) {
-        if(!mapLogs.containsKey(map))
-            return -1;
+        if(!mapLogs.containsKey(map)) {
+            // lets try loading the map first
+            loadMapLog(map, false);
+            if(!mapLogs.containsKey(map))
+                return -1;
+            return getRank(map, playerId);
+        }
         return mapLogs.get(map).getRank(playerId);
     }
 

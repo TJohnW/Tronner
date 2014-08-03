@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="indexed-tree-map">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/indexed-tree-map.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/indexed-tree-map.jar!/main" />
+      <root url="jar://$PROJECT_DIR$/lib/indexed-tree-map.jar!/test" />
+    </SOURCES>
+  </library>
+</component>

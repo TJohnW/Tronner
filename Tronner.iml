@@ -7,8 +7,11 @@
     </content>
     <orderEntry type="jdk" jdkName="1.7" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="mysql-connector-java-5.1.31-bin" level="project" />
+    <orderEntry type="library" exported="" name="commons-collections4-4.0-javadoc" level="project" />
+    <orderEntry type="library" exported="" name="commons-collections4-4.0" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.2.4-javadoc" level="project" />
     <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
+    <orderEntry type="library" exported="" name="indexed-tree-map" level="project" />
   </component>
 </module>
 

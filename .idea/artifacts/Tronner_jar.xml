@@ -4,7 +4,7 @@
     <root id="archive" name="Tronner.jar">
       <element id="module-output" name="Tronner" />
       <element id="extracted-dir" path="$USER_HOME$/Downloads/Chrome Downloads/mysql-connector-java-5.1.31/mysql-connector-java-5.1.31-bin.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/Chrome Downloads/google-gson-2.2.4/gson-2.2.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/gson-2.2.4.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

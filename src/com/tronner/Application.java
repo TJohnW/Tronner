@@ -24,18 +24,11 @@
 
 package com.tronner;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
+import com.tronner.util.JsonManager;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Scanner;
 
 /**
@@ -108,9 +101,7 @@ public class Application {
      * @throws IOException
      */
     public void readConfig() throws IOException {
-        byte[] encoded = Files.readAllBytes(Paths.get(configurationFile));
-        Gson g = new Gson();
-        config = g.fromJson(new String(encoded, StandardCharsets.UTF_8), Configuration.class);
+        config = JsonManager.loadFromJson(configurationFile, Configuration.class);
     }
 
     /**
@@ -119,10 +110,7 @@ public class Application {
      * @throws IOException
      */
     public void saveConfig() throws IOException {
-        BufferedWriter output = new BufferedWriter(new FileWriter(new File(configurationFile)));
-        Gson g = new GsonBuilder().setPrettyPrinting().create();
-        output.write(g.toJson(config));
-        output.close();
+        JsonManager.saveAsJson(configurationFile, config, true);
     }
 
     /**
