@@ -24,6 +24,9 @@
 
 package com.tronner;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Tronner - Configuration
  *
@@ -54,5 +57,9 @@ public class Configuration {
      * The database password
      */
     public String db_pass;
+
+    public Map<String, Double> times = new HashMap<String, Double>() {{
+        put("Tristan", 10.324d);
+    }};
 
 }

@@ -57,8 +57,8 @@ public abstract class ServerEventListener {
      * @param oldName the old name
      * @param newName the new name
      */
-    public void PLAYER_RENAMED(String oldName, String newName) {
-    }
+    //public void PLAYER_RENAMED(String oldName, String newName) {
+    //}
 
     /**
      * Called on an Invalid (Custom Command).

@@ -129,6 +129,7 @@ public class Application {
      * Runs the main scanning for the parser
      */
     private void run() {
+        System.out.println(config.times.get("Tristan"));
         parser.parseRaw("GAME_TIME 10");
         while(scan.hasNextLine()) {
             parser.parseRaw(scan.nextLine());

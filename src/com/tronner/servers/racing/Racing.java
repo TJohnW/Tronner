@@ -33,6 +33,15 @@ import com.tronner.parser.ServerEventListener;
  */
 public class Racing extends ServerEventListener {
 
+
+    public Racing() {
+        new LogManager();
+    }
+
+    public static String path() {
+        return "";
+    }
+
     @Override
     public void GAME_TIME(int time) {
         System.out.println("Time!!!");
@@ -42,11 +51,5 @@ public class Racing extends ServerEventListener {
     public void CYCLE_CREATED(String playerName, float xPosition, float yPosition, int xDirection, int yDirection) {
         System.out.println("A cycle was created at x= " + xPosition + " y= " + yPosition);
     }
-
-    @Override
-    public void PLAYER_RENAMED(String oldName, String newName) {
-        System.out.println("Someone renamed!");
-    }
-
 
 }
