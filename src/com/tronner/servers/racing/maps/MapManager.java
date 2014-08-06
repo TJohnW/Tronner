@@ -22,15 +22,13 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing;
+package com.tronner.servers.racing.maps;
 
 /**
- * Tronner - RoundManager
+ * Tronner - MapManager
  *
  * @author TJohnW
  */
-public class RoundManager {
-
-
+public class MapManager {
 
 }

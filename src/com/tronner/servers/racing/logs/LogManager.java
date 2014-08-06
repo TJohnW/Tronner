@@ -22,8 +22,9 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing;
+package com.tronner.servers.racing.logs;
 
+import com.tronner.servers.racing.Racing;
 import com.tronner.util.JsonManager;
 
 import java.io.IOException;
@@ -90,6 +91,16 @@ public class LogManager {
             mapLogs.put(mapName, ml);
             saveMapLog(mapName);
         }
+    }
+
+    /**
+     * Lets unload this log, not needed for now
+     * @param mapName the map to forget and let memory manage
+     * @param save save the map first?
+     */
+    public void unloadMapLog(String mapName, boolean save) {
+        if(save) saveMapLog(mapName);
+        mapLogs.remove(mapName);
     }
 
     /**

@@ -22,37 +22,65 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing;
+package com.tronner.servers.racing.maps;
 
-import com.tronner.parser.ServerEventListener;
-import com.tronner.servers.racing.logs.LogManager;
-import com.tronner.servers.racing.maps.QueueManager;
-import com.tronner.servers.racing.maps.RotationManager;
-import com.tronner.servers.racing.maps.RoundMapManager;
+import java.util.LinkedList;
 
 /**
- * Tronner - Racing
+ * Tronner - QueueManager
  *
  * @author TJohnW
  */
-public class Racing extends ServerEventListener {
+public class QueueManager implements RoundMapManager {
 
-    public static final String PATH = "";
+    private boolean active = false;
 
-    private LogManager logger = new LogManager();
+    private boolean enabled = false;
 
-    private RoundMapManager queue = new QueueManager();
+    private LinkedList<String> queue = new LinkedList<>();
 
-    private RoundMapManager rotation = new RotationManager();
+    public void addAt(int index, String mapName) {
+        queue.add(index, mapName);
+    }
 
-    @Override
-    public void GAME_TIME(int time) {
-        System.out.println("Time!!!");
+    public void add(String mapName) {
+        queue.addLast(mapName);
+    }
+
+    public void removeAt(int index) {
+        queue.remove(index);
+    }
+
+    public void remove(String mapName) {
+        while(queue.contains(mapName))
+            queue.remove(mapName);
+    }
+
+    public void start() throws QueueEmptyException, QueueDisabledException {
+        if(!enabled)
+            throw new QueueDisabledException();
+
+        else if(queue.size() == 0)
+            throw new QueueEmptyException();
+
+        active = true;
+    }
+
+    public boolean validMap(String mapName) {
+        return false;
     }
 
     @Override
-    public void CYCLE_CREATED(String playerName, float xPosition, float yPosition, int xDirection, int yDirection) {
-        System.out.println("A cycle was created at x= " + xPosition + " y= " + yPosition);
+    public boolean isActive() {
+        return active;
     }
 
+    @Override
+    public String next() {
+        return queue.pop();
+    }
+
+    public class QueueEmptyException extends Exception {}
+
+    public class QueueDisabledException extends Exception {}
 }

@@ -22,37 +22,23 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing;
-
-import com.tronner.parser.ServerEventListener;
-import com.tronner.servers.racing.logs.LogManager;
-import com.tronner.servers.racing.maps.QueueManager;
-import com.tronner.servers.racing.maps.RotationManager;
-import com.tronner.servers.racing.maps.RoundMapManager;
+package com.tronner.servers.racing.maps;
 
 /**
- * Tronner - Racing
+ * Tronner - RoundManager
  *
  * @author TJohnW
  */
-public class Racing extends ServerEventListener {
+public class RotationManager implements RoundMapManager{
 
-    public static final String PATH = "";
-
-    private LogManager logger = new LogManager();
-
-    private RoundMapManager queue = new QueueManager();
-
-    private RoundMapManager rotation = new RotationManager();
 
     @Override
-    public void GAME_TIME(int time) {
-        System.out.println("Time!!!");
+    public boolean isActive() {
+        return true;
     }
 
     @Override
-    public void CYCLE_CREATED(String playerName, float xPosition, float yPosition, int xDirection, int yDirection) {
-        System.out.println("A cycle was created at x= " + xPosition + " y= " + yPosition);
+    public String next() {
+        return null;
     }
-
 }
