@@ -24,6 +24,7 @@
 
 package com.tronner.servers.racing;
 
+import com.tronner.dispatcher.Commands;
 import com.tronner.parser.ServerEventListener;
 import com.tronner.servers.racing.logs.LogManager;
 import com.tronner.servers.racing.logs.PlayerTime;
@@ -55,17 +56,20 @@ public class Racing extends ServerEventListener {
         System.out.println("A cycle was created at x= " + xPosition + " y= " + yPosition);
     }
 
-    public static void main(String[] args) {
-        Racing r = new Racing();
-        long tstart = System.nanoTime();
-        r.logger.loadMapLog("Aflac");
-        System.out.println(System.nanoTime() - tstart);
-
-        System.out.println("Map Loaded and cached.");
-
-        tstart = System.nanoTime();
-        System.out.println(r.logger.getRank("Aflac", "Erica502"));
-        System.out.println(System.nanoTime() - tstart);
-
+    @Override
+    public void ROUND_COMMENCING() {
+        manager.load();
+        logger.getLog(manager.getCurrentMap().getName());
     }
+
+    @Override
+    public void TARGETZONE_PLAYER_ENTER(int globalID, float zoneX, float zoneY,
+                                        String playerId, float playerX, float playerY, float playerXDir,
+                                        float playerYDir, float time) {
+        logger.getLog(manager.getCurrentMap().getName()).updateRecord(new PlayerTime(playerId, time));
+        Commands.CONSOLE_MESSAGE("Current Map: " + manager.getCurrentMap().getName());
+        Commands.CONSOLE_MESSAGE("You finished in " + time + ". Your rank is now " + logger.getLog(manager.getCurrentMap().getName()).getRank(playerId));
+    }
+
+
 }

@@ -64,6 +64,14 @@ public abstract class ServerEvent {
             onEvent(il, args);
     }
 
+    public int i(String arg) {
+        return Integer.parseInt(arg);
+    }
+
+    public float f(String arg) {
+        return Float.parseFloat(arg);
+    }
+
     /**
      * Handled by all of the ServerEvent extended classes for ladderlog events.
      * @param il the InputListener to call the command on

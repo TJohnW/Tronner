@@ -22,25 +22,23 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing.lang;
+package com.tronner.parser.events;
 
-import com.tronner.dispatcher.Commands;
-import com.tronner.servers.racing.maps.RacingMap;
+import com.tronner.parser.ServerEvent;
+import com.tronner.parser.ServerEventListener;
+
+import java.util.Arrays;
 
 /**
- * Tronner - LMapManager
- * Language Constants used by the map manager
- * @author Tristan
+ * Tronner - CYCLE_CREATED
+ *
+ * @author TJohnW
  */
-public class LMapManager {
+public class TARGETZONE_PLAYER_ENTER extends ServerEvent {
 
-    public static void mapInfo(RacingMap map) {
-        Commands.CONSOLE_MESSAGE(LColors.LIGHT_GREY + "Map: " + LColors.MAROON + map.getName() +
-                LColors.LIGHT_GREY + " by: " + LColors.MAROON + map.getAuthor());
-
-        if(map.getAxes() != 8) {
-            Commands.CONSOLE_MESSAGE("Axes: " + LColors.MAROON + map.getAxes());
-        }
+    @Override
+    public void onEvent(ServerEventListener sel, String... args) {
+        System.out.println(Arrays.toString(args));
+        sel.TARGETZONE_PLAYER_ENTER(i(args[0]), f(args[1]), f(args[2]), args[3], f(args[4]), f(args[5]), f(args[6]), f(args[7]), f(args[8]));
     }
-
 }

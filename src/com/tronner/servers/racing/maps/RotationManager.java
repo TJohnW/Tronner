@@ -24,9 +24,6 @@
 
 package com.tronner.servers.racing.maps;
 
-import com.tronner.servers.racing.logs.PlayerTime;
-import com.tronner.util.JsonManager;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -82,6 +79,10 @@ public class RotationManager implements RoundMapManager {
             currentIndex = 0;
         } else {
             currentIndex++;
+        }
+        if(maps.size() <= 0) {
+            System.out.println("No Maps Loaded. Error.");
+            return null;
         }
         return maps.get(currentIndex);
     }

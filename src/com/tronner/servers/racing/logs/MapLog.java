@@ -85,6 +85,7 @@ public class MapLog {
      */
     public void sort() {
         Collections.sort(records, comparator);
+        System.out.println("Number of records now sorted: " + records.size());
         cache();
     }
 
@@ -117,6 +118,7 @@ public class MapLog {
             }
         } else {
             records.add(playerTime);
+            System.out.println("Adding to records. Player not found.");
         }
         sort();
         return getRank(playerTime.getPlayer());

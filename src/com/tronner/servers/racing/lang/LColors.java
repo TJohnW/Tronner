@@ -24,23 +24,15 @@
 
 package com.tronner.servers.racing.lang;
 
-import com.tronner.dispatcher.Commands;
-import com.tronner.servers.racing.maps.RacingMap;
-
 /**
- * Tronner - LMapManager
- * Language Constants used by the map manager
- * @author Tristan
+ * Tronner - LColors
+ *
+ * @author Tristan on 8/6/2014.
  */
-public class LMapManager {
+public class LColors {
 
-    public static void mapInfo(RacingMap map) {
-        Commands.CONSOLE_MESSAGE(LColors.LIGHT_GREY + "Map: " + LColors.MAROON + map.getName() +
-                LColors.LIGHT_GREY + " by: " + LColors.MAROON + map.getAuthor());
+    public static final String LIGHT_GREY = "0x888888";
 
-        if(map.getAxes() != 8) {
-            Commands.CONSOLE_MESSAGE("Axes: " + LColors.MAROON + map.getAxes());
-        }
-    }
+    public static final String MAROON = "0x883333";
 
 }

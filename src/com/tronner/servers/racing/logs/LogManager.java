@@ -51,6 +51,8 @@ public class LogManager {
      * @return the MapLog
      */
     public MapLog getLog(String map) {
+        if(!mapLogs.containsKey(map))
+            loadMapLog(map, true);
         return mapLogs.get(map);
     }
 
@@ -112,6 +114,7 @@ public class LogManager {
         try {
             JsonManager.saveAsJson(Racing.PATH + "data/maplogs/" + mapName + ".JSON", mapLogs.get(mapName));
         } catch (IOException e) {
+            e.printStackTrace();
             System.out.println("Unable to save MapLog for map: " + mapName);
         }
     }

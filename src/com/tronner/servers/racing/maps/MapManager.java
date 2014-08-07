@@ -41,11 +41,11 @@ import java.util.Map;
  */
 public class MapManager {
 
-    private Map<String, RacingMap> maps = new HashMap<>();
+    private Map<String, RacingMap> maps;
 
-    private QueueManager queue = new QueueManager();
+    private QueueManager queue;
 
-    private RotationManager rotation = new RotationManager(this);
+    private RotationManager rotation;
 
     private RoundMapManager currentManager = rotation;
 
@@ -55,7 +55,12 @@ public class MapManager {
      * Creates the MapManager and loads the maps
      */
     public MapManager() {
+        maps = new HashMap<>();
         loadMaps();
+        queue = new QueueManager();
+        rotation = new RotationManager(this);
+        currentManager = rotation;
+        currentMap = currentManager.next();
     }
 
     /**
@@ -74,8 +79,11 @@ public class MapManager {
      * ACTUALLY LOADS THE CURRENT MAP INTO THE SERVER!
      */
     public void load() {
-        Commands.MAP_FILE(currentMap.getPath());
-        //LMapManager.outputMapData();
+        if (currentMap != null) {
+            Commands.MAP_FILE(currentMap.getPath());
+            LMapManager.mapInfo(currentMap);
+        }
+        next();
     }
 
     /**
@@ -100,6 +108,14 @@ public class MapManager {
      */
     public RotationManager getRotation() {
         return rotation;
+    }
+
+    /**
+     * Used to get the current map
+     * @return the current RacingMap
+     */
+    public RacingMap getCurrentMap() {
+        return currentMap;
     }
 
     /**

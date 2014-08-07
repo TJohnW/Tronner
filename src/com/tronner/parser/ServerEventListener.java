@@ -68,4 +68,11 @@ public abstract class ServerEventListener {
     public void INVALID_COMMAND(String... args) {
     }
 
+    public void ROUND_COMMENCING() {
+    }
+
+    public void TARGETZONE_PLAYER_ENTER(int globalID, float zoneX, float zoneY,
+                                        String playerId, float playerX, float playerY, float playerXDir,
+                                        float playerYDir, float time) {
+    }
 }

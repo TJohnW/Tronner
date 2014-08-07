@@ -42,6 +42,9 @@ import java.nio.file.Paths;
  */
 public class JsonManager {
 
+    public static final String PATH = "../servers/legacy/scripts/";
+    //public static final String PATH  = "";
+
     /**
      * Used to save an object as JSON to a file path.
      * Always prints ugly JSON
@@ -61,7 +64,7 @@ public class JsonManager {
      * @throws IOException
      */
     public static void saveAsJson(String path, Object toJson, boolean pretty) throws IOException {
-        BufferedWriter output = new BufferedWriter(new FileWriter(new File(path)));
+        BufferedWriter output = new BufferedWriter(new FileWriter(new File(PATH+path)));
         Gson g;
         if(pretty) g = new GsonBuilder().setPrettyPrinting().create();
         else g = new Gson();
@@ -70,7 +73,7 @@ public class JsonManager {
     }
 
     public static <T> T loadFromJson(String path, Class<T> clazz) throws IOException {
-        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        byte[] encoded = Files.readAllBytes(Paths.get(PATH+path));
         Gson g = new Gson();
         return g.fromJson(new String(encoded, StandardCharsets.UTF_8), clazz);
     }

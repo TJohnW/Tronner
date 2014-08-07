@@ -38,6 +38,8 @@ import java.util.Scanner;
  */
 public class Application {
 
+    //public static final String PATH = "../servers/legacy/scripts/";
+
     /**
      * The main configuration data
      */
@@ -85,6 +87,7 @@ public class Application {
             parser = Parser.getInstance(sel);
             return true;
         } catch(IndexOutOfBoundsException e) {
+            //e.printStackTrace();
             return initialize("config.JSON");
         } catch (IOException e) {
             System.out.println("Error reading config file.");
