@@ -27,6 +27,9 @@ package com.tronner.servers.racing.maps;
 import com.tronner.dispatcher.Commands;
 import com.tronner.servers.racing.Racing;
 import com.tronner.servers.racing.lang.LMapManager;
+import com.tronner.servers.racing.logs.LogManager;
+import com.tronner.servers.racing.logs.MapLog;
+import com.tronner.servers.racing.logs.PlayerTime;
 import com.tronner.util.JsonManager;
 
 import java.io.IOException;
@@ -43,6 +46,11 @@ public class MapManager {
 
     private Map<String, RacingMap> maps;
 
+
+    private LogManager logger;
+
+    private MapLog currentLog;
+
     private QueueManager queue;
 
     private RotationManager rotation;
@@ -54,13 +62,31 @@ public class MapManager {
     /**
      * Creates the MapManager and loads the maps
      */
-    public MapManager() {
+    public MapManager(LogManager logManager) {
+        logger = logManager;
         maps = new HashMap<>();
         loadMaps();
         queue = new QueueManager();
         rotation = new RotationManager(this);
         currentManager = rotation;
-        currentMap = currentManager.next();
+    }
+
+    /**
+     * Called when a player finishes the current map
+     * @param playerTime the PlayerTime
+     */
+    public void finished(PlayerTime playerTime) {
+        int oldRank = currentLog.getRank(playerTime.getPlayer());
+
+        double difference = currentLog.updateRecord(playerTime);
+
+        int newRank = currentLog.getRank(playerTime.getPlayer());
+
+        boolean improvedTime = (difference < 0.0d);
+
+        boolean improvedRank = (newRank > oldRank);
+
+        LMapManager.player_finished(playerTime.getPlayer(), improvedTime, improvedRank, difference, newRank);
     }
 
     /**
@@ -68,22 +94,24 @@ public class MapManager {
      * and sets the current RacingMap.
      */
     public void next() {
-        if(currentManager.isActive())
-            currentMap = currentManager.next();
-        else {
+        if(currentMap != null)
+            logger.unloadMapLog(currentMap.getName(), true);
+
+        if(!currentManager.isActive())
             currentManager = rotation; // rotation is never "unactive"
-        }
+
+        currentMap = currentManager.next();
+        logger.loadMapLog(currentMap.getName());
+        currentLog = logger.getLog(currentMap.getName());
     }
 
     /**
      * ACTUALLY LOADS THE CURRENT MAP INTO THE SERVER!
      */
     public void load() {
-        if (currentMap != null) {
-            Commands.MAP_FILE(currentMap.getPath());
-            LMapManager.mapInfo(currentMap);
-        }
         next();
+        Commands.MAP_FILE(currentMap.getPath());
+        LMapManager.current_map(currentMap);
     }
 
     /**

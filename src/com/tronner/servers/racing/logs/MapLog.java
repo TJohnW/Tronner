@@ -105,11 +105,14 @@ public class MapLog {
      * Updates the record for a player, and returns
      * their new rank. Will also add a new record
      * if they dont have one already
+     * returns difference in time + for slower - for faster
      * @param playerTime The PlayerTime object to update
      */
-    public int updateRecord(PlayerTime playerTime) {
+    public double updateRecord(PlayerTime playerTime) {
         // Fancy caching help here
+        double difference = 0.0d;
         if(ranks.containsKey(playerTime.getPlayer())) {
+            difference = playerTime.getTime() - ranks.get(playerTime.getPlayer()).getTime();
             if(playerTime.getTime() < ranks.get(playerTime.getPlayer()).getTime()) {
                 ranks.get(playerTime.getPlayer()).setTime(playerTime.getTime());
             } else {
@@ -121,7 +124,7 @@ public class MapLog {
             System.out.println("Adding to records. Player not found.");
         }
         sort();
-        return getRank(playerTime.getPlayer());
+        return difference;
     }
 
     /**

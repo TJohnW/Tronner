@@ -35,4 +35,5 @@ public class LColors {
 
     public static final String MAROON = "0x883333";
 
+    public static final String WHITE = "0xffffff";
 }

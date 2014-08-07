@@ -29,9 +29,6 @@ import com.tronner.parser.ServerEventListener;
 import com.tronner.servers.racing.logs.LogManager;
 import com.tronner.servers.racing.logs.PlayerTime;
 import com.tronner.servers.racing.maps.MapManager;
-import com.tronner.servers.racing.maps.QueueManager;
-import com.tronner.servers.racing.maps.RotationManager;
-import com.tronner.servers.racing.maps.RoundMapManager;
 
 /**
  * Tronner - Racing
@@ -42,9 +39,10 @@ public class Racing extends ServerEventListener {
 
     public static final String PATH = "";
 
-    public LogManager logger = new LogManager();
+    private LogManager logger = new LogManager();
 
-    private MapManager manager = new MapManager();
+    private MapManager manager = new MapManager(logger);
+
 
     @Override
     public void GAME_TIME(int time) {
@@ -59,16 +57,15 @@ public class Racing extends ServerEventListener {
     @Override
     public void ROUND_COMMENCING() {
         manager.load();
-        logger.getLog(manager.getCurrentMap().getName());
     }
 
     @Override
     public void TARGETZONE_PLAYER_ENTER(int globalID, float zoneX, float zoneY,
                                         String playerId, float playerX, float playerY, float playerXDir,
                                         float playerYDir, float time) {
-        logger.getLog(manager.getCurrentMap().getName()).updateRecord(new PlayerTime(playerId, time));
+        manager.finished(new PlayerTime(playerId, time));
         Commands.CONSOLE_MESSAGE("Current Map: " + manager.getCurrentMap().getName());
-        Commands.CONSOLE_MESSAGE("You finished in " + time + ". Your rank is now " + logger.getLog(manager.getCurrentMap().getName()).getRank(playerId));
+        Commands.CONSOLE_MESSAGE("You player_finished in " + time + ". Your rank is now " + logger.getLog(manager.getCurrentMap().getName()).getRank(playerId));
     }
 
 

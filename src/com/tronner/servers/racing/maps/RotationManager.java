@@ -39,7 +39,7 @@ public class RotationManager implements RoundMapManager {
     /**
      * The currentIndex in the rotation
      */
-    private int currentIndex = 0;
+    private int currentIndex = -1;
 
     /**
      * The List of maps for the rotation to use

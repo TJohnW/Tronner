@@ -40,6 +40,8 @@ public class LogManager {
 
     private Map<String, MapLog> mapLogs = new HashMap<>();
 
+    private MapLog currentLog;
+
     public LogManager() {
 
     }
@@ -85,7 +87,7 @@ public class LogManager {
             mapLogs.get(mapName).sort();
         } catch (IOException e) {
             if(!createOnFail) {
-                System.out.println("Error loading MapLog, finished");
+                System.out.println("Error loading MapLog, player_finished");
                 return;
             }
             System.out.println("Error loading MapLog for map, attempting to create it: " + mapName);

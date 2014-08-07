@@ -80,4 +80,7 @@ public class Commands {
         CENTER_MESSAGE("Winner: " + player);
     }
 
+    public static void CYCLE_RUBBER(int i) {
+        out("CYCLE_RUBBER "+ i);
+    }
 }

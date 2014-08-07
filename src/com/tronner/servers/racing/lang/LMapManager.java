@@ -24,8 +24,11 @@
 
 package com.tronner.servers.racing.lang;
 
-import com.tronner.dispatcher.Commands;
 import com.tronner.servers.racing.maps.RacingMap;
+import com.tronner.util.TronStringBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Tronner - LMapManager
@@ -34,13 +37,24 @@ import com.tronner.servers.racing.maps.RacingMap;
  */
 public class LMapManager {
 
-    public static void mapInfo(RacingMap map) {
-        Commands.CONSOLE_MESSAGE(LColors.LIGHT_GREY + "Map: " + LColors.MAROON + map.getName() +
-                LColors.LIGHT_GREY + " by: " + LColors.MAROON + map.getAuthor());
-
-        if(map.getAxes() != 8) {
-            Commands.CONSOLE_MESSAGE("Axes: " + LColors.MAROON + map.getAxes());
-        }
+    public static TronStringBuilder tsb = new TronStringBuilder(LColors.WHITE);
+    static {
+        tsb.addColor("1", LColors.LIGHT_GREY);
+        tsb.addColor("2", LColors.MAROON);
     }
 
+    public static Map<String, String> cachedColorOutput = new HashMap<>();
+
+    public static final String CURRENT_MAX = "{1}[author]{2}: {3}[name]";
+
+
+    public static void current_map(RacingMap map) {
+
+    }
+
+    public static void player_finished(String playerTimePlayer, boolean improvedTime, boolean improvedRank,
+                                       double difference, int newRank) {
+
+
+    }
 }
