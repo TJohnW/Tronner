@@ -33,29 +33,65 @@ import java.util.LinkedList;
  */
 public class QueueManager implements RoundMapManager {
 
+    /**
+     * True if the queue is active
+     */
     private boolean active = false;
 
+    /**
+     * True if the queue is enabled by the owners
+     */
     private boolean enabled = false;
 
-    private LinkedList<String> queue = new LinkedList<>();
+    /**
+     * The queue of maps stored as a LinkedList
+     */
+    private LinkedList<RacingMap> queue = new LinkedList<>();
 
-    public void addAt(int index, String mapName) {
-        queue.add(index, mapName);
+    /**
+     * Creates a new QueueManager with the given MapManager
+     */
+    public QueueManager() { }
+
+    /**
+     * Adds to the queue at a certain index
+     * @param index the index to add
+     * @param map the name of the map to add
+     */
+    public void addAt(int index, RacingMap map) {
+        queue.add(index, map);
     }
 
-    public void add(String mapName) {
-        queue.addLast(mapName);
+    /**
+     * Adds to the end of the queue
+     * @param map the name of the map to add
+     */
+    public void add(RacingMap map) {
+        queue.addLast(map);
     }
 
+    /**
+     * Removes from a certain index
+     * @param index the index to remove from
+     */
     public void removeAt(int index) {
         queue.remove(index);
     }
 
-    public void remove(String mapName) {
-        while(queue.contains(mapName))
-            queue.remove(mapName);
+    /**
+     * Removes a given map from the queue anywhere, and all of them
+     * @param map the map to remove
+     */
+    public void remove(RacingMap map) {
+        while(queue.contains(map))
+            queue.remove(map);
     }
 
+    /**
+     * Attempts to start the queue and activate it
+     * @throws QueueEmptyException if the queue is empty
+     * @throws QueueDisabledException if the queue is disable by +admin
+     */
     public void start() throws QueueEmptyException, QueueDisabledException {
         if(!enabled)
             throw new QueueDisabledException();
@@ -66,21 +102,31 @@ public class QueueManager implements RoundMapManager {
         active = true;
     }
 
-    public boolean validMap(String mapName) {
-        return false;
-    }
-
     @Override
     public boolean isActive() {
+        if(queue.size() == 0) {
+            active = false;
+            return false;
+        }
         return active;
     }
 
     @Override
-    public String next() {
-        return queue.pop();
+    public RacingMap next() {
+        if(queue.size() != 0) {
+            return queue.pop();
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * Thrown when the queue is empty and tried to start
+     */
     public class QueueEmptyException extends Exception {}
 
+    /**
+     * Thrown when the queue is disabled and tried to start
+     */
     public class QueueDisabledException extends Exception {}
 }

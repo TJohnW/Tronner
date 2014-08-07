@@ -22,24 +22,14 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing.maps;
+package com.tronner.servers.racing.lang;
 
 /**
- * Tronner - RoundMapManager
+ * Tronner - LQueueManager
  *
- * @author TJohnW
+ * @author TJohnW on 8/6/2014.
  */
-public interface RoundMapManager {
+public class LQueueManager {
 
-    /**
-     * Returns if this is active or available for use
-     * @return the active state
-     */
-    public boolean isActive();
-
-    /**
-     * Progresses the Manager to the next map
-     */
-    public RacingMap next();
 
 }

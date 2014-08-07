@@ -51,5 +51,33 @@ public class Commands {
 
     }
 
+    public static void MAP_FILE(String mapPath) {
+        out("MAP_FILE " + mapPath);
+    }
+
+    public static void CONSOLE_MESSAGE(String message) {
+        out("CONSOLE_MESSAGE " + message);
+    }
+
+    public static void CENTER_MESSAGE(String message) {
+        out("CENTER_MESSAGE " + message);
+    }
+
+    public static void ROUND_CENTER_MESSAGE(String message) {
+        out("ROUND_CENTER_MESSAGE" + message);
+    }
+
+    public static void KILL(String playerName) {
+        out("KILL " + playerName);
+    }
+
+    public static void PLAYER_MESSAGE(String receiver, String message) {
+        out("PLAYER_MESSAGE " + receiver + " " + message);
+    }
+
+    public static void DECLARE_ROUND_WINNER(String player) {
+        out("DECLARE_ROUND_WINNER " + player);
+        CENTER_MESSAGE("Winner: " + player);
+    }
 
 }

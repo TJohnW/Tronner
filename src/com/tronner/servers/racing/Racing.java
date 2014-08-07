@@ -26,6 +26,8 @@ package com.tronner.servers.racing;
 
 import com.tronner.parser.ServerEventListener;
 import com.tronner.servers.racing.logs.LogManager;
+import com.tronner.servers.racing.logs.PlayerTime;
+import com.tronner.servers.racing.maps.MapManager;
 import com.tronner.servers.racing.maps.QueueManager;
 import com.tronner.servers.racing.maps.RotationManager;
 import com.tronner.servers.racing.maps.RoundMapManager;
@@ -39,11 +41,9 @@ public class Racing extends ServerEventListener {
 
     public static final String PATH = "";
 
-    private LogManager logger = new LogManager();
+    public LogManager logger = new LogManager();
 
-    private RoundMapManager queue = new QueueManager();
-
-    private RoundMapManager rotation = new RotationManager();
+    private MapManager manager = new MapManager();
 
     @Override
     public void GAME_TIME(int time) {
@@ -55,4 +55,17 @@ public class Racing extends ServerEventListener {
         System.out.println("A cycle was created at x= " + xPosition + " y= " + yPosition);
     }
 
+    public static void main(String[] args) {
+        Racing r = new Racing();
+        long tstart = System.nanoTime();
+        r.logger.loadMapLog("Aflac");
+        System.out.println(System.nanoTime() - tstart);
+
+        System.out.println("Map Loaded and cached.");
+
+        tstart = System.nanoTime();
+        System.out.println(r.logger.getRank("Aflac", "Erica502"));
+        System.out.println(System.nanoTime() - tstart);
+
+    }
 }
