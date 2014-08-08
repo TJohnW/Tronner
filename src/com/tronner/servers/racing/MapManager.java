@@ -22,14 +22,17 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing.maps;
+package com.tronner.servers.racing;
 
 import com.tronner.dispatcher.Commands;
-import com.tronner.servers.racing.Racing;
+import com.tronner.parser.ServerEventListener;
 import com.tronner.servers.racing.lang.LMapManager;
-import com.tronner.servers.racing.logs.LogManager;
 import com.tronner.servers.racing.logs.MapLog;
 import com.tronner.servers.racing.logs.PlayerTime;
+import com.tronner.servers.racing.maps.Queue;
+import com.tronner.servers.racing.maps.RacingMap;
+import com.tronner.servers.racing.maps.Rotation;
+import com.tronner.servers.racing.maps.RoundMapManager;
 import com.tronner.util.JsonManager;
 
 import java.io.IOException;
@@ -42,22 +45,19 @@ import java.util.Map;
  *
  * @author TJohnW
  */
-public class MapManager {
+public class MapManager extends ServerEventListener {
 
     private Map<String, RacingMap> maps;
 
-
     private LogManager logger;
 
-    private MapLog currentLog;
+    private RacingMap currentMap;
 
-    private QueueManager queue;
+    private Queue queue;
 
-    private RotationManager rotation;
+    private Rotation rotation;
 
     private RoundMapManager currentManager = rotation;
-
-    private RacingMap currentMap;
 
     /**
      * Creates the MapManager and loads the maps
@@ -66,52 +66,9 @@ public class MapManager {
         logger = logManager;
         maps = new HashMap<>();
         loadMaps();
-        queue = new QueueManager();
-        rotation = new RotationManager(this);
+        queue = new Queue();
+        rotation = new Rotation(this);
         currentManager = rotation;
-    }
-
-    /**
-     * Called when a player finishes the current map
-     * @param playerTime the PlayerTime
-     */
-    public void finished(PlayerTime playerTime) {
-        int oldRank = currentLog.getRank(playerTime.getPlayer());
-
-        double difference = currentLog.updateRecord(playerTime);
-
-        int newRank = currentLog.getRank(playerTime.getPlayer());
-
-        boolean improvedTime = (difference < 0.0d);
-
-        boolean improvedRank = (newRank > oldRank);
-
-        LMapManager.player_finished(playerTime.getPlayer(), improvedTime, improvedRank, difference, newRank);
-    }
-
-    /**
-     * Progresses the RoundMapManager to the next map
-     * and sets the current RacingMap.
-     */
-    public void next() {
-        if(currentMap != null)
-            logger.unloadMapLog(currentMap.getName(), true);
-
-        if(!currentManager.isActive())
-            currentManager = rotation; // rotation is never "unactive"
-
-        currentMap = currentManager.next();
-        logger.loadMapLog(currentMap.getName());
-        currentLog = logger.getLog(currentMap.getName());
-    }
-
-    /**
-     * ACTUALLY LOADS THE CURRENT MAP INTO THE SERVER!
-     */
-    public void load() {
-        next();
-        Commands.MAP_FILE(currentMap.getPath());
-        LMapManager.current_map(currentMap);
     }
 
     /**
@@ -124,17 +81,17 @@ public class MapManager {
 
     /**
      * Gets the Queue
-     * @return the QueueManager
+     * @return the Queue
      */
-    public QueueManager getQueue() {
+    public Queue getQueue() {
         return queue;
     }
 
     /**
      * Gets the Rotation
-     * @return the RotationManager
+     * @return the Rotation
      */
-    public RotationManager getRotation() {
+    public Rotation getRotation() {
         return rotation;
     }
 
@@ -170,5 +127,26 @@ public class MapManager {
             System.out.println("Error loading MapData file at data/Maps.JSON");
         }
     }
+
+    /**
+     * ACTUALLY LOADS THE CURRENT MAP INTO THE SERVER!
+     *
+     * Progresses the RoundMapManager to the next map
+     * and sets the current RacingMap.
+     */
+    @Override
+    public void ROUND_COMMENCING() {
+        if(currentMap != null)
+            logger.unloadMapLog(currentMap.getName(), true);
+
+        if(!currentManager.isActive())
+            currentManager = rotation; // rotation is never "unactive"
+
+        currentMap = currentManager.next();
+        logger.loadMapLog(currentMap.getName());
+        logger.setCurrentLog(logger.getLog(currentMap.getName()));
+        Commands.MAP_FILE(currentMap.getPath());
+    }
+
 
 }

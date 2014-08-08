@@ -22,56 +22,20 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing;
+package com.tronner.parser.events;
 
-import com.tronner.Application;
-import com.tronner.dispatcher.Commands;
-import com.tronner.parser.Parser;
+import com.tronner.parser.ServerEvent;
 import com.tronner.parser.ServerEventListener;
-import com.tronner.servers.racing.lang.LMapManager;
-import com.tronner.servers.racing.logs.PlayerTime;
 
 /**
- * Tronner - Racing
+ * Tronner - GAME_TIME
  *
  * @author TJohnW
  */
-@SuppressWarnings("ALL")
-public class Racing extends ServerEventListener {
+public class DEATH_FRAG extends ServerEvent {
 
-    public static final String PATH = "";
-
-    private LogManager logger = new LogManager();
-
-    private MapManager mapManager = new MapManager(logger);
-
-    private PlayerManager playerManager = new PlayerManager();
-
-    private RaceTimer timer = new RaceTimer(playerManager);
-
-    /**
-     * Kills all players to end current round on startup.
-     */
-    public Racing() {
-
-        Commands.CYCLE_RUBBER(-10);
-        Application.sleep(1000);
-        Commands.CYCLE_RUBBER(90);
-
-        Parser p = Parser.getInstance(this);
-
-        // sets the order of precedence for the event listeners
-
-        p.reflectListeners(timer);
-
-        p.reflectListeners(playerManager);
-
-        p.reflectListeners(mapManager);
-
-        p.reflectListeners(logger);
-
-        p.reflectListeners(this);
-
+    @Override
+    public void onEvent(ServerEventListener sel, String... args) {
+        sel.DEATH_FRAG(args[0], args[1]);
     }
-
 }

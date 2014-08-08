@@ -84,7 +84,7 @@ public class Application {
             String clazz = getClass().getPackage().getName() + ".servers." + config.server.toLowerCase() + "." + config.server;
             Class serverPlugin = Class.forName(clazz);
             ServerEventListener sel = (ServerEventListener) serverPlugin.newInstance();
-            parser = Parser.getInstance(sel);
+            parser = Parser.getInstance(sel, false);
             return true;
         } catch(IndexOutOfBoundsException e) {
             //e.printStackTrace();
@@ -126,6 +126,18 @@ public class Application {
             parser.parseRaw(scan.nextLine());
         }
         scan.close();
+    }
+
+    /**
+     * Sleeps the application for a little :D
+     * Might replace this with having the plugin run as a thread.. dont know yet.
+     */
+    public static void sleep(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

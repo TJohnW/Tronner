@@ -22,54 +22,74 @@
  * SOFTWARE.
  */
 
-package com.tronner.parser;
+package com.tronner.servers.racing;
 
 /**
- * Tronner - ServerEventListener
+ * Tronner - Player
  *
- * @author TJohnW
+ * @author Tristan on 8/7/2014.
  */
-public abstract class ServerEventListener {
+public class Player {
 
-    public void GAME_TIME(int time) {
+    private String id;
+
+    private String display;
+
+    private int queues = 0;
+
+    private boolean alive = false;
+
+    private boolean finished = false;
+
+    public Player(String id) {
+        this.id = id;
     }
 
-    public void CYCLE_CREATED(String playerId, float xPosition, float yPosition, int xDirection, int yDirection) {
+    public String getId() {
+        return id;
     }
 
-    public void PLAYER_RENAMED(String oldName, String newName, String ip, String displayName) {
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void PLAYER_ENTERED(String name, String ip, String displayName) {
+    public String getDisplay() {
+        return display;
     }
 
-    public void PLAYER_LEFT(String player, String ip) {
+    public void setDisplay(String display) {
+        this.display = display;
     }
 
-    public void INVALID_COMMAND(String... args) {
+    public int getQueues() {
+        return queues;
     }
 
-    public void ROUND_COMMENCING() {
+    public void setQueues(int queues) {
+        this.queues = queues;
     }
 
-    public void TARGETZONE_PLAYER_ENTER(int globalID, float zoneX, float zoneY,
-                                        String playerId, float playerX, float playerY, float playerXDir,
-                                        float playerYDir, float time) {
+    public boolean equals(Object o) {
+        if(o.getClass() != Player.class) {
+            return false;
+        }
+        Player r = (Player) o;
+        return r.getId().equals(getId());
     }
 
-    public void DEATH_SUICIDE(String player) {
+    public boolean isAlive() {
+        return alive;
     }
 
-    public void DEATH_FRAG(String playerKilled, String killer) {
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 
-    public void DEATH_DEATHZONE(String player) {
+    public boolean isFinished() {
+        return finished;
     }
 
-    public void DEATH_RUBBERZONE(String player) {
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
-
-    public void PLAYER_KILLED(String player, String ip, float x, float y, int xDir, int yDir) {
-    }
-
 }

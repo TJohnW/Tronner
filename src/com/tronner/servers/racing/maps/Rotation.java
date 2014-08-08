@@ -24,6 +24,8 @@
 
 package com.tronner.servers.racing.maps;
 
+import com.tronner.servers.racing.MapManager;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,7 +36,7 @@ import java.util.List;
  *
  * @author TJohnW
  */
-public class RotationManager implements RoundMapManager {
+public class Rotation implements RoundMapManager {
 
     /**
      * The currentIndex in the rotation
@@ -47,10 +49,10 @@ public class RotationManager implements RoundMapManager {
     private List<RacingMap> maps = new ArrayList<>(100);
 
     /**
-     * Constructs a RotationManager for the given MapManager
+     * Constructs a Rotation for the given MapManager
      * @param mm the MapManager to use
      */
-    public RotationManager(MapManager mm) {
+    public Rotation(MapManager mm) {
         updateFromManager(mm);
     }
 

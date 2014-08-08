@@ -71,13 +71,16 @@ public class Commands {
         out("KILL " + playerName);
     }
 
+    public static void ADMIN_KILL_MESSAGE(boolean on) {
+        out("ADMIN_KILL_MESSAGE " + ((on) ? "1" : "0"));
+    }
+
     public static void PLAYER_MESSAGE(String receiver, String message) {
         out("PLAYER_MESSAGE " + receiver + " " + message);
     }
 
     public static void DECLARE_ROUND_WINNER(String player) {
         out("DECLARE_ROUND_WINNER " + player);
-        CENTER_MESSAGE("Winner: " + player);
     }
 
     public static void CYCLE_RUBBER(int i) {

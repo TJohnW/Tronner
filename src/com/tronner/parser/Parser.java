@@ -56,18 +56,32 @@ public class Parser {
     /**
      * Reflects the events onto their methods
      */
-    private Parser(ServerEventListener sel, Class commandClazz) {
+    private Parser(ServerEventListener sel, Class commandClazz, boolean reflectListeners) {
         Parser.commandClazz = commandClazz;
         reflectEvents();
-        reflectListeners(sel);
+        if(reflectListeners)
+            reflectListeners(sel);
+    }
+
+    private Parser(ServerEventListener sel, Class commandClazz) {
+        this(sel, commandClazz, true);
     }
 
     /**
      * Gets the only instance of Parser or creates an instance.
      * @return the Parser object. (singleton)
      */
+    public static Parser getInstance(ServerEventListener sel, boolean reflectListeners) {
+        return getInstance(sel, ServerEventListener.class, reflectListeners);
+    }
+
     public static Parser getInstance(ServerEventListener sel) {
-        return getInstance(sel, ServerEventListener.class);
+        return getInstance(sel, ServerEventListener.class, true);
+    }
+
+    public static Parser getInstance(ServerEventListener sel, Class commandClazz, boolean reflectListeners) {
+        if(instance == null) instance = new Parser(sel, commandClazz, reflectListeners);
+        return instance;
     }
 
     public static Parser getInstance(ServerEventListener sel, Class commandClazz) {
@@ -90,7 +104,10 @@ public class Parser {
      */
     public void parse(String command, String... args) {
         ServerEvent se = events.get(command);
-        if(se != null) se.onEvent(args);
+        if(se != null) {
+            se.onEvent(args);
+            System.out.println("# Input Handled: " + command);
+        }
         else {
             System.out.println("Ignored input: " + command + " " + Arrays.toString(args));
         }

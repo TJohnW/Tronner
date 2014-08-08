@@ -27,11 +27,11 @@ package com.tronner.servers.racing.maps;
 import java.util.LinkedList;
 
 /**
- * Tronner - QueueManager
+ * Tronner - Queue
  *
  * @author TJohnW
  */
-public class QueueManager implements RoundMapManager {
+public class Queue implements RoundMapManager {
 
     /**
      * True if the queue is active
@@ -49,9 +49,9 @@ public class QueueManager implements RoundMapManager {
     private LinkedList<RacingMap> queue = new LinkedList<>();
 
     /**
-     * Creates a new QueueManager with the given MapManager
+     * Creates a new Queue with the given MapManager
      */
-    public QueueManager() { }
+    public Queue() { }
 
     /**
      * Adds to the queue at a certain index

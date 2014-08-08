@@ -22,9 +22,12 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing.logs;
+package com.tronner.servers.racing;
 
+import com.tronner.parser.ServerEventListener;
 import com.tronner.servers.racing.Racing;
+import com.tronner.servers.racing.logs.MapLog;
+import com.tronner.servers.racing.logs.PlayerTime;
 import com.tronner.util.JsonManager;
 
 import java.io.IOException;
@@ -36,15 +39,11 @@ import java.util.Map;
  *
  * @author TJohnW
  */
-public class LogManager {
+public class LogManager extends ServerEventListener {
 
     private Map<String, MapLog> mapLogs = new HashMap<>();
 
     private MapLog currentLog;
-
-    public LogManager() {
-
-    }
 
     /**
      * Gets the log for the map, if not available,
@@ -139,4 +138,20 @@ public class LogManager {
         return mapLogs.get(map).getRank(playerId);
     }
 
+    public MapLog getCurrentLog() {
+        return currentLog;
+    }
+
+    public void setCurrentLog(MapLog currentLog) {
+        this.currentLog = currentLog;
+    }
+
+    @Override
+    public void TARGETZONE_PLAYER_ENTER(int globalID, float zoneX, float zoneY,
+                                        String playerId, float playerX, float playerY, float playerXDir,
+                                        float playerYDir, float time) {
+
+        int oldRank = currentLog.getRank(playerId);
+        double difference = currentLog.updateRecord(new PlayerTime(playerId, time));
+    }
 }

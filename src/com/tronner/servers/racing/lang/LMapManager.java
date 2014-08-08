@@ -24,11 +24,7 @@
 
 package com.tronner.servers.racing.lang;
 
-import com.tronner.servers.racing.maps.RacingMap;
-import com.tronner.util.TronStringBuilder;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.tronner.util.LString;
 
 /**
  * Tronner - LMapManager
@@ -37,24 +33,26 @@ import java.util.Map;
  */
 public class LMapManager {
 
-    public static TronStringBuilder tsb = new TronStringBuilder(LColors.WHITE);
+
+    /**
+     * Language output string,
+     * Takes arguments,
+     * author and player
+     */
+    public static LString CURRENT_MAP = new LString(
+            "[author]: [player]"
+    );
     static {
-        tsb.addColor("1", LColors.LIGHT_GREY);
-        tsb.addColor("2", LColors.MAROON);
+        CURRENT_MAP.c("[author]", LColors.MAROON, LColors.WHITE);
+        CURRENT_MAP.c("[player]", LColors.MAROON);
     }
 
-    public static Map<String, String> cachedColorOutput = new HashMap<>();
-
-    public static final String CURRENT_MAX = "{1}[author]{2}: {3}[name]";
-
-
-    public static void current_map(RacingMap map) {
-
+    public static LString PLAYER_FINISHED = new LString(
+            "[player] finished in [time] seconds and [improved] rank [rank]."
+    );
+    static {
+        //CURRENT_MAP.c("[author]", LColors.MAROON, LColors.WHITE);
+        //CURRENT_MAP.c("[player]", LColors.MAROON);
     }
 
-    public static void player_finished(String playerTimePlayer, boolean improvedTime, boolean improvedRank,
-                                       double difference, int newRank) {
-
-
-    }
 }

@@ -24,54 +24,41 @@
 
 package com.tronner.servers.racing;
 
-import com.tronner.Application;
 import com.tronner.dispatcher.Commands;
-import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
-import com.tronner.servers.racing.lang.LMapManager;
-import com.tronner.servers.racing.logs.PlayerTime;
 
 /**
- * Tronner - Racing
+ * Tronner - RaceTimer
  *
- * @author TJohnW
+ * @author Tristan on 8/7/2014.
  */
-@SuppressWarnings("ALL")
-public class Racing extends ServerEventListener {
+public class RaceTimer extends ServerEventListener {
 
-    public static final String PATH = "";
+    private int timeLeft = 100;
 
-    private LogManager logger = new LogManager();
+    private PlayerManager playerManager;
 
-    private MapManager mapManager = new MapManager(logger);
+    public RaceTimer(PlayerManager pm) {
+        playerManager = pm;
+    }
 
-    private PlayerManager playerManager = new PlayerManager();
+    public int getTimeLeft() {
+        return timeLeft;
+    }
 
-    private RaceTimer timer = new RaceTimer(playerManager);
+    public void setTimeLeft(int timeLeft) {
+        this.timeLeft = timeLeft;
+    }
 
-    /**
-     * Kills all players to end current round on startup.
-     */
-    public Racing() {
+    @Override
+    public void GAME_TIME(int time) {
+        if(playerManager.playersFinished() >= 1 && playerManager.playersRacing() >= 1) {
+            timeLeft--;
+            Commands.CENTER_MESSAGE(timeLeft + "                 ");
+        }
 
-        Commands.CYCLE_RUBBER(-10);
-        Application.sleep(1000);
-        Commands.CYCLE_RUBBER(90);
-
-        Parser p = Parser.getInstance(this);
-
-        // sets the order of precedence for the event listeners
-
-        p.reflectListeners(timer);
-
-        p.reflectListeners(playerManager);
-
-        p.reflectListeners(mapManager);
-
-        p.reflectListeners(logger);
-
-        p.reflectListeners(this);
-
+        if(timeLeft <= 0 || playerManager.playersRacing() <= 0)
+            playerManager.declareWinner();
     }
 
 }

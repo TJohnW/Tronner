@@ -24,6 +24,9 @@
 
 package com.tronner.parser;
 
+import com.tronner.servers.racing.MapManager;
+import com.tronner.servers.racing.PlayerManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +48,11 @@ public abstract class ServerEvent {
      */
     public void addListener(ServerEventListener il) {
         listeners.add(il);
+    }
+
+    public void addListeners(ServerEventListener... sels) {
+        for(ServerEventListener sel: sels)
+            addListener(sel);
     }
 
     /**
@@ -78,5 +86,4 @@ public abstract class ServerEvent {
      * @param args the arguments passed after the command
      */
     public abstract void onEvent(ServerEventListener il, String... args);
-
 }
