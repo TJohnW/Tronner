@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing;
+package com.tronner.servers.racing.players;
 
 /**
  * Tronner - Player

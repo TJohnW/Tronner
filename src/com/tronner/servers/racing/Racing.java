@@ -28,8 +28,9 @@ import com.tronner.Application;
 import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
-import com.tronner.servers.racing.lang.LMapManager;
-import com.tronner.servers.racing.logs.PlayerTime;
+import com.tronner.servers.racing.logs.LogManager;
+import com.tronner.servers.racing.maps.MapManager;
+import com.tronner.servers.racing.players.PlayerManager;
 
 /**
  * Tronner - Racing
@@ -53,7 +54,6 @@ public class Racing extends ServerEventListener {
      * Kills all players to end current round on startup.
      */
     public Racing() {
-
         Commands.CYCLE_RUBBER(-10);
         Application.sleep(1000);
         Commands.CYCLE_RUBBER(90);
@@ -62,16 +62,15 @@ public class Racing extends ServerEventListener {
 
         // sets the order of precedence for the event listeners
 
-        p.reflectListeners(timer);
-
         p.reflectListeners(playerManager);
+
+        p.reflectListeners(timer);
 
         p.reflectListeners(mapManager);
 
         p.reflectListeners(logger);
 
         p.reflectListeners(this);
-
     }
 
 }

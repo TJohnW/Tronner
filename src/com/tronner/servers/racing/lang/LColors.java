@@ -29,6 +29,7 @@ package com.tronner.servers.racing.lang;
  *
  * @author Tristan on 8/6/2014.
  */
+@SuppressWarnings("UnusedDeclaration")
 public class LColors {
 
     public static final String LIGHT_GREY = "0xe5e5e5"; //Typically used for Map by://
@@ -42,9 +43,7 @@ public class LColors {
     public static final String LIGHT_ORANGE = "0xffddaa";
 
 
-
     public static final String ERROR_RED = "0xff7777"; //generic error and warning red.//
-
 
 
     public static final String DARK_RED = "0xcc4444";

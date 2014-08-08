@@ -24,9 +24,6 @@
 
 package com.tronner.parser;
 
-import com.tronner.servers.racing.MapManager;
-import com.tronner.servers.racing.PlayerManager;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -31,6 +31,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -42,8 +43,8 @@ import java.nio.file.Paths;
  */
 public class JsonManager {
 
-    public static final String PATH = "../servers/legacy/scripts/";
-    //public static final String PATH  = "";
+    //public static final String PATH = "../servers/legacy/scripts/";
+    public static final String PATH  = "";
 
     /**
      * Used to save an object as JSON to a file path.
@@ -78,4 +79,9 @@ public class JsonManager {
         return g.fromJson(new String(encoded, StandardCharsets.UTF_8), clazz);
     }
 
+    public static <T> T loadFromJson(String path, Type listType) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(PATH+path));
+        Gson g = new Gson();
+        return g.fromJson(new String(encoded, StandardCharsets.UTF_8), listType);
+    }
 }

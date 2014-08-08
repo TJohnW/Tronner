@@ -22,44 +22,45 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing;
-
-import com.tronner.dispatcher.Commands;
-import com.tronner.parser.ServerEventListener;
-import com.tronner.servers.racing.players.PlayerManager;
+package com.tronner.servers.racing.logs;
 
 /**
- * Tronner - RaceTimer
+ * Tronner - PlayerXP
  *
- * @author Tristan on 8/7/2014.
+ * @author Tristan on 8/8/2014.
  */
-public class RaceTimer extends ServerEventListener {
+public class PlayerXP {
 
-    private int timeLeft = 100;
+    private String name;
 
-    private PlayerManager playerManager;
+    private int xp;
 
-    public RaceTimer(PlayerManager pm) {
-        playerManager = pm;
+    public PlayerXP(String name, int xp) {
+        this.name = name;
+        this.xp = xp;
     }
 
-    public int getTimeLeft() {
-        return timeLeft;
+    public String getName() {
+        return name;
     }
 
-    public void setTimeLeft(int timeLeft) {
-        this.timeLeft = timeLeft;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @Override
-    public void GAME_TIME(int time) {
-        if(playerManager.playersFinished() >= 1 && playerManager.playersRacing() >= 1) {
-            timeLeft--;
-            Commands.CENTER_MESSAGE(timeLeft + "                 ");
-        }
-
-        if(timeLeft <= 0 || playerManager.playersRacing() <= 0)
-            playerManager.declareWinner();
+    public int getXp() {
+        return xp;
     }
 
+    public void setXp(int xp) {
+        this.xp = xp;
+    }
+
+    public void addXp(int xp) {
+        this.xp += xp;
+    }
+
+    public void removeXp(int xp) {
+        this.xp -= xp;
+    }
 }

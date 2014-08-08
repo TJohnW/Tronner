@@ -22,12 +22,10 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing;
+package com.tronner.servers.racing.logs;
 
 import com.tronner.parser.ServerEventListener;
 import com.tronner.servers.racing.Racing;
-import com.tronner.servers.racing.logs.MapLog;
-import com.tronner.servers.racing.logs.PlayerTime;
 import com.tronner.util.JsonManager;
 
 import java.io.IOException;
@@ -81,7 +79,7 @@ public class LogManager extends ServerEventListener {
      */
     public void loadMapLog(String mapName, boolean createOnFail) {
         try {
-            mapLogs.put(mapName, JsonManager.loadFromJson(Racing.PATH + "data/maplogs/" + mapName + ".JSON",
+            mapLogs.put(mapName, JsonManager.loadFromJson(Racing.PATH + "data/times/" + mapName + ".JSON",
                     MapLog.class));
             mapLogs.get(mapName).sort();
         } catch (IOException e) {
@@ -113,7 +111,7 @@ public class LogManager extends ServerEventListener {
      */
     public void saveMapLog(String mapName) {
         try {
-            JsonManager.saveAsJson(Racing.PATH + "data/maplogs/" + mapName + ".JSON", mapLogs.get(mapName));
+            JsonManager.saveAsJson(Racing.PATH + "data/times/" + mapName + ".JSON", mapLogs.get(mapName));
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Unable to save MapLog for map: " + mapName);

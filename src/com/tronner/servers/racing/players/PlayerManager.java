@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing;
+package com.tronner.servers.racing.players;
 
 import com.tronner.dispatcher.Commands;
 import com.tronner.parser.ServerEventListener;
@@ -41,17 +41,13 @@ public class PlayerManager extends ServerEventListener {
 
     private String winner = "";
 
-    public PlayerManager() {
-
-    }
-
     public void addPlayer(Player racer) {
-        if(!players.contains(racer))
+        if (!players.contains(racer))
             players.add(racer);
     }
 
     public void removePlayer(Player racer) {
-        if(players.contains(racer)) {
+        if (players.contains(racer)) {
             players.remove(racer);
         }
     }
@@ -61,8 +57,8 @@ public class PlayerManager extends ServerEventListener {
     }
 
     public Player playerFromID(String playerID) {
-        for(Player r: players) {
-            if(r.getId().equals(playerID))
+        for (Player r : players) {
+            if (r.getId().equals(playerID))
                 return r;
         }
         return null;
@@ -70,37 +66,37 @@ public class PlayerManager extends ServerEventListener {
 
     public int playersAlive() {
         int alive = 0;
-        for(Player p: players)
-            if(p.isAlive())
+        for (Player p : players)
+            if (p.isAlive())
                 alive++;
         return alive;
     }
 
     public int playersFinished() {
         int finished = 0;
-        for(Player p: players)
-            if(p.isFinished())
+        for (Player p : players)
+            if (p.isFinished())
                 finished++;
         return finished;
     }
 
     public int playersRacing() {
         int racing = 0;
-        for(Player p: players)
-            if(!p.isFinished() && p.isAlive())
+        for (Player p : players)
+            if (!p.isFinished() && p.isAlive())
                 racing++;
         return racing;
     }
 
     public void killAll() {
-        for(Player p: players)
+        for (Player p : players)
             Commands.KILL(p.getId());
     }
 
     @Override
     public void ROUND_COMMENCING() {
         winner = "";
-        for(Player p: players) {
+        for (Player p : players) {
             p.setAlive(false);
             p.setFinished(false);
         }
@@ -109,7 +105,7 @@ public class PlayerManager extends ServerEventListener {
     @Override
     public void CYCLE_CREATED(String playerName, float xPosition, float yPosition, int xDirection, int yDirection) {
         Player p = playerFromID(playerName);
-        if(p == null) {
+        if (p == null) {
             p = new Player(playerName);
             addPlayer(p);
             System.out.println("Player created without entering, was this because the script was started during gameplay?");
@@ -127,14 +123,61 @@ public class PlayerManager extends ServerEventListener {
 
     @Override
     public void TARGETZONE_PLAYER_ENTER(int globalID, float zoneX, float zoneY,
-                            String playerId, float playerX, float playerY, float playerXDir,
-                            float playerYDir, float time) {
+                                        String playerId, float playerX, float playerY, float playerXDir,
+                                        float playerYDir, float time) {
 
         Player p = playerFromID(playerId);
-        if("".equals(winner)) {
+        if ("".equals(winner)) {
             winner = playerId;
         }
-        if(!p.isFinished())
+        if (!p.isFinished())
             p.setFinished(true);
+    }
+
+    public void death(String player) {
+        Player p = playerFromID(player);
+        if (p != null)
+            p.setAlive(false);
+    }
+
+    @Override
+    public void DEATH_SUICIDE(String player) {
+        death(player);
+    }
+
+    @Override
+    public void DEATH_FRAG(String playerKilled, String killer) {
+        death(playerKilled);
+    }
+
+    @Override
+    public void DEATH_DEATHZONE(String player) {
+        death(player);
+    }
+
+    @Override
+    public void DEATH_RUBBERZONE(String player) {
+        death(player);
+    }
+
+    @Override
+    public void PLAYER_KILLED(String player, String ip, float x, float y, int xDir, int yDir) {
+        death(player);
+    }
+
+    @Override
+    public void PLAYER_RENAMED(String oldName, String newName, String ip, String displayName) {
+        Player p = playerFromID(oldName);
+        p.setId(newName);
+    }
+
+    @Override
+    public void PLAYER_ENTERED(String name, String ip, String displayName) {
+        addPlayer(new Player(name));
+    }
+
+    @Override
+    public void PLAYER_LEFT(String player, String ip) {
+        removePlayer(player);
     }
 }

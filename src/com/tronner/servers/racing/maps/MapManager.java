@@ -22,13 +22,12 @@
  * SOFTWARE.
  */
 
-package com.tronner.servers.racing;
+package com.tronner.servers.racing.maps;
 
 import com.tronner.dispatcher.Commands;
 import com.tronner.parser.ServerEventListener;
-import com.tronner.servers.racing.lang.LMapManager;
-import com.tronner.servers.racing.logs.MapLog;
-import com.tronner.servers.racing.logs.PlayerTime;
+import com.tronner.servers.racing.Racing;
+import com.tronner.servers.racing.logs.LogManager;
 import com.tronner.servers.racing.maps.Queue;
 import com.tronner.servers.racing.maps.RacingMap;
 import com.tronner.servers.racing.maps.Rotation;

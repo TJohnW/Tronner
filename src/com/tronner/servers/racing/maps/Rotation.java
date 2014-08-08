@@ -24,8 +24,6 @@
 
 package com.tronner.servers.racing.maps;
 
-import com.tronner.servers.racing.MapManager;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
