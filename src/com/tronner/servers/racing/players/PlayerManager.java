@@ -25,6 +25,7 @@
 package com.tronner.servers.racing.players;
 
 import com.tronner.dispatcher.Commands;
+import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
 
 import java.util.ArrayList;
@@ -40,6 +41,10 @@ public class PlayerManager extends ServerEventListener {
     private List<Player> players = new ArrayList<>();
 
     private String winner = "";
+
+    public PlayerManager() {
+        Parser.getInstance().reflectListeners(this);
+    }
 
     public void addPlayer(Player racer) {
         if (!players.contains(racer))

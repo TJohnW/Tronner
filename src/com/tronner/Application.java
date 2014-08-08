@@ -38,7 +38,16 @@ import java.util.Scanner;
  */
 public class Application {
 
-    //public static final String PATH = "../servers/legacy/scripts/";
+    /**
+     * This needs to be the path to the folder with
+     * Tronner.jar in it.
+     * MAKE SURE TO READ THIS.
+     */
+    public static final String PATH = "../servers/legacy/scripts/";
+    //public static final String PATH= "";
+    static {
+        JsonManager.PATH = PATH;
+    }
 
     /**
      * The main configuration data
@@ -84,7 +93,7 @@ public class Application {
             String clazz = getClass().getPackage().getName() + ".servers." + config.server.toLowerCase() + "." + config.server;
             Class serverPlugin = Class.forName(clazz);
             ServerEventListener sel = (ServerEventListener) serverPlugin.newInstance();
-            parser = Parser.getInstance(sel, false);
+            parser = Parser.getInstance(); // add config for reflect on load
             return true;
         } catch(IndexOutOfBoundsException e) {
             //e.printStackTrace();
@@ -120,8 +129,6 @@ public class Application {
      * Runs the main scanning for the parser
      */
     private void run() {
-
-        parser.parseRaw("GAME_TIME 10");
         while(scan.hasNextLine()) {
             parser.parseRaw(scan.nextLine());
         }

@@ -48,7 +48,6 @@ public class Rotation implements RoundMapManager {
 
     /**
      * Constructs a Rotation for the given MapManager
-     * @param mm the MapManager to use
      */
     public Rotation(MapManager mm) {
         updateFromManager(mm);

@@ -24,6 +24,7 @@
 
 package com.tronner.servers.racing.logs;
 
+import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
 import com.tronner.servers.racing.Racing;
 import com.tronner.util.JsonManager;
@@ -39,9 +40,25 @@ import java.util.Map;
  */
 public class LogManager extends ServerEventListener {
 
+    private static LogManager instance = null;
+
     private Map<String, MapLog> mapLogs = new HashMap<>();
 
     private MapLog currentLog;
+
+    private LogManager() {
+        Parser.getInstance().reflectListeners(this);
+    }
+
+    /**
+     * Creates our singleton LogManager
+     * @return the LogManager
+     */
+    public static LogManager getInstance() {
+        if(instance == null)
+            instance = new LogManager();
+        return instance;
+    }
 
     /**
      * Gets the log for the map, if not available,
@@ -79,7 +96,7 @@ public class LogManager extends ServerEventListener {
      */
     public void loadMapLog(String mapName, boolean createOnFail) {
         try {
-            mapLogs.put(mapName, JsonManager.loadFromJson(Racing.PATH + "data/times/" + mapName + ".JSON",
+            mapLogs.put(mapName, JsonManager.loadFromJson("data/" + Racing.PATH_TIMES + mapName + ".JSON",
                     MapLog.class));
             mapLogs.get(mapName).sort();
         } catch (IOException e) {
@@ -111,7 +128,7 @@ public class LogManager extends ServerEventListener {
      */
     public void saveMapLog(String mapName) {
         try {
-            JsonManager.saveAsJson(Racing.PATH + "data/times/" + mapName + ".JSON", mapLogs.get(mapName));
+            JsonManager.saveAsJson("data/" + Racing.PATH_TIMES + mapName + ".JSON", mapLogs.get(mapName));
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Unable to save MapLog for map: " + mapName);
@@ -152,4 +169,5 @@ public class LogManager extends ServerEventListener {
         int oldRank = currentLog.getRank(playerId);
         double difference = currentLog.updateRecord(new PlayerTime(playerId, time));
     }
+
 }

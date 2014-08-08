@@ -25,13 +25,10 @@
 package com.tronner.servers.racing.maps;
 
 import com.tronner.dispatcher.Commands;
+import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
-import com.tronner.servers.racing.Racing;
 import com.tronner.servers.racing.logs.LogManager;
-import com.tronner.servers.racing.maps.Queue;
-import com.tronner.servers.racing.maps.RacingMap;
-import com.tronner.servers.racing.maps.Rotation;
-import com.tronner.servers.racing.maps.RoundMapManager;
+import com.tronner.servers.racing.players.PlayerManager;
 import com.tronner.util.JsonManager;
 
 import java.io.IOException;
@@ -46,28 +43,25 @@ import java.util.Map;
  */
 public class MapManager extends ServerEventListener {
 
-    private Map<String, RacingMap> maps;
-
-    private LogManager logger;
+    private Map<String, RacingMap> maps = new HashMap<>();
+    {
+        loadMaps();
+    }
 
     private RacingMap currentMap;
 
     private Queue queue;
 
-    private Rotation rotation;
+    private Rotation rotation = new Rotation(this);
 
     private RoundMapManager currentManager = rotation;
 
     /**
      * Creates the MapManager and loads the maps
      */
-    public MapManager(LogManager logManager) {
-        logger = logManager;
-        maps = new HashMap<>();
-        loadMaps();
-        queue = new Queue();
-        rotation = new Rotation(this);
-        currentManager = rotation;
+    public MapManager(PlayerManager pm) {
+        Parser.getInstance().reflectListeners(this);
+        queue = new Queue(this, pm);
     }
 
     /**
@@ -76,6 +70,22 @@ public class MapManager extends ServerEventListener {
      */
     public Map<String, RacingMap> getMaps() {
         return maps;
+    }
+
+    /**
+     * Gets the specified map
+     * @param map the map to get
+     * @return the RacingMap
+     */
+    public RacingMap getMap(String map) {
+        return maps.get(map);
+    }
+
+    public void setCurrentManager(RoundMapManager manager) {
+        if(manager.isActive())
+            currentManager = manager;
+        else
+            System.out.println("Tried to set current manager to inactive manager?");
     }
 
     /**
@@ -117,13 +127,13 @@ public class MapManager extends ServerEventListener {
     @SuppressWarnings("unchecked")
     public void loadMaps() {
         try {
-            List<String> mapsLoad = JsonManager.loadFromJson(Racing.PATH + "data/Maps" + ".JSON", List.class);
+            List<String> mapsLoad = JsonManager.loadFromJson("data/maps" + ".JSON", List.class);
             for(String s: mapsLoad) {
                 RacingMap rm = new RacingMap(s);
                 maps.put(rm.getName(), rm);
             }
         } catch (IOException e) {
-            System.out.println("Error loading MapData file at data/Maps.JSON");
+            System.out.println("Error loading MapData file at data/maps.JSON");
         }
     }
 
@@ -136,16 +146,15 @@ public class MapManager extends ServerEventListener {
     @Override
     public void ROUND_COMMENCING() {
         if(currentMap != null)
-            logger.unloadMapLog(currentMap.getName(), true);
+            LogManager.getInstance().unloadMapLog(currentMap.getName(), true);
 
         if(!currentManager.isActive())
             currentManager = rotation; // rotation is never "unactive"
 
         currentMap = currentManager.next();
-        logger.loadMapLog(currentMap.getName());
-        logger.setCurrentLog(logger.getLog(currentMap.getName()));
+        LogManager.getInstance().loadMapLog(currentMap.getName());
+        LogManager.getInstance().setCurrentLog(LogManager.getInstance().getLog(currentMap.getName()));
         Commands.MAP_FILE(currentMap.getPath());
     }
-
 
 }

@@ -54,45 +54,67 @@ public class Parser {
     private Map<String, ServerEvent> events = new HashMap<>();
 
     /**
-     * Reflects the events onto their methods
+     * Creates a parser without reflecting any events.
+     * @param commandClazz the command class
      */
-    private Parser(ServerEventListener sel, Class commandClazz, boolean reflectListeners) {
+    private Parser(Class commandClazz) {
         Parser.commandClazz = commandClazz;
         reflectEvents();
-        if(reflectListeners)
-            reflectListeners(sel);
     }
 
+    /**
+     * Creates a parser and reflects the listeners onto the given
+     * sel
+     * @param sel the sel to reflect onto
+     * @param commandClazz the command class
+     */
     private Parser(ServerEventListener sel, Class commandClazz) {
-        this(sel, commandClazz, true);
+        this(commandClazz);
+        reflectListeners(sel);
     }
+
 
     /**
      * Gets the only instance of Parser or creates an instance.
      * @return the Parser object. (singleton)
      */
-    public static Parser getInstance(ServerEventListener sel, boolean reflectListeners) {
-        return getInstance(sel, ServerEventListener.class, reflectListeners);
-    }
-
-    public static Parser getInstance(ServerEventListener sel) {
-        return getInstance(sel, ServerEventListener.class, true);
-    }
-
-    public static Parser getInstance(ServerEventListener sel, Class commandClazz, boolean reflectListeners) {
-        if(instance == null) instance = new Parser(sel, commandClazz, reflectListeners);
-        return instance;
-    }
-
     public static Parser getInstance(ServerEventListener sel, Class commandClazz) {
         if(instance == null) instance = new Parser(sel, commandClazz);
         return instance;
     }
 
+    /**
+     * Creates a parser without registering any listeners
+     * @param commandClazz the command class
+     * @return the new Parser instance
+     */
+    public static Parser getInstance(Class commandClazz) {
+        if(instance == null) instance = new Parser(commandClazz);
+        return instance;
+    }
+
+    /**
+     * Careful, could return null
+     * @return the parser
+     */
+    public static Parser getInstance() {
+        return instance;
+    }
+
+    /**
+     * Gets an event from the map of events
+     * @param event the event name
+     * @return the ServerEvent
+     */
     public ServerEvent getEvent(String event) {
         return events.get(event);
     }
 
+    /**
+     * Sets an Event in the map
+     * @param name the name of the event
+     * @param se the ServerEvent to set
+     */
     public void setEvent(String name, ServerEvent se) {
         events.put(name, se);
     }

@@ -32,6 +32,8 @@ import com.tronner.servers.racing.logs.LogManager;
 import com.tronner.servers.racing.maps.MapManager;
 import com.tronner.servers.racing.players.PlayerManager;
 
+import java.util.Arrays;
+
 /**
  * Tronner - Racing
  *
@@ -40,37 +42,64 @@ import com.tronner.servers.racing.players.PlayerManager;
 @SuppressWarnings("ALL")
 public class Racing extends ServerEventListener {
 
-    public static final String PATH = "";
+    public static final String PATH_TIMES = "times/";
 
-    private LogManager logger = new LogManager();
+    private PlayerManager playerManager;
 
-    private MapManager mapManager = new MapManager(logger);
+    private RaceTimer timer;
 
-    private PlayerManager playerManager = new PlayerManager();
+    private LogManager logger;
 
-    private RaceTimer timer = new RaceTimer(playerManager);
+    private MapManager mapManager;
 
     /**
-     * Kills all players to end current round on startup.
+     * Initializes all of the listeners
+     * with the proper order for execution.
      */
     public Racing() {
+        initialize();
+
+        /**
+         * Warning, this order of object creation
+         * is IMPORTANT
+         * changing the order in which
+         * these objects are created could
+         * mess up the racing script.
+         * Please do not change these until you
+         * completely understand the way
+         * events are reflected to their
+         * listeners.
+         */
+
+        playerManager = new PlayerManager(); // Plan to make this PlayerManager and RacerManager extends PlayerManager
+
+        timer = new RaceTimer(playerManager);
+
+        // This is a singleton because it is needed in multiple managers,
+        // might think of a better idea, but for now I dont want to restructure
+        // again...
+        logger = LogManager.getInstance();
+
+        mapManager = new MapManager(playerManager);
+
+        Parser.getInstance().reflectListeners(this);
+
+    }
+
+    /**
+     * Kills the currently alive players to not mess up the player engine
+     * on script load.
+     */
+    public void initialize() {
         Commands.CYCLE_RUBBER(-10);
         Application.sleep(1000);
         Commands.CYCLE_RUBBER(90);
+    }
 
-        Parser p = Parser.getInstance(this);
-
-        // sets the order of precedence for the event listeners
-
-        p.reflectListeners(playerManager);
-
-        p.reflectListeners(timer);
-
-        p.reflectListeners(mapManager);
-
-        p.reflectListeners(logger);
-
-        p.reflectListeners(this);
+    @Override
+    public void INVALID_COMMAND(String... args) {
+        //[/q, TJohnW@forums, 76.185.188.37, -2, add, Telepo]
+        System.out.println(Arrays.toString(args));
     }
 
 }

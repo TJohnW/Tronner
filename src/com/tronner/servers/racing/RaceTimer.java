@@ -25,6 +25,7 @@
 package com.tronner.servers.racing;
 
 import com.tronner.dispatcher.Commands;
+import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
 import com.tronner.servers.racing.players.PlayerManager;
 
@@ -40,6 +41,7 @@ public class RaceTimer extends ServerEventListener {
     private PlayerManager playerManager;
 
     public RaceTimer(PlayerManager pm) {
+        Parser.getInstance().reflectListeners(this);
         playerManager = pm;
     }
 

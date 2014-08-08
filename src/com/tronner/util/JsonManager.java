@@ -43,8 +43,7 @@ import java.nio.file.Paths;
  */
 public class JsonManager {
 
-    //public static final String PATH = "../servers/legacy/scripts/";
-    public static final String PATH  = "";
+    public static String PATH = "";
 
     /**
      * Used to save an object as JSON to a file path.
