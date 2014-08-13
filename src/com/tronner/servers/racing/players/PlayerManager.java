@@ -27,6 +27,7 @@ package com.tronner.servers.racing.players;
 import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
+import com.tronner.servers.racing.logs.LogManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +109,8 @@ public class PlayerManager extends ServerEventListener {
     }
 
     @Override
-    public void CYCLE_CREATED(String playerName, float xPosition, float yPosition, int xDirection, int yDirection) {
+    public void CYCLE_CREATED(String playerName, float xPosition, float yPosition, float xDirection, float yDirection) {
+
         Player p = playerFromID(playerName);
         if (p == null) {
             p = new Player(playerName);
@@ -132,6 +134,10 @@ public class PlayerManager extends ServerEventListener {
                                         float playerYDir, float time) {
 
         Player p = playerFromID(playerId);
+
+        if(p == null)
+            return;
+
         if ("".equals(winner)) {
             winner = playerId;
         }
@@ -166,14 +172,18 @@ public class PlayerManager extends ServerEventListener {
     }
 
     @Override
-    public void PLAYER_KILLED(String player, String ip, float x, float y, int xDir, int yDir) {
+    public void PLAYER_KILLED(String player, String ip, float x, float y, float what, float why) {
         death(player);
     }
 
     @Override
     public void PLAYER_RENAMED(String oldName, String newName, String ip, String displayName) {
-        Player p = playerFromID(oldName);
-        p.setId(newName);
+        if(playerFromID(oldName) == null) {
+            addPlayer(new Player(newName));
+        } else {
+            Player p = playerFromID(oldName);
+            p.setId(newName);
+        }
     }
 
     @Override

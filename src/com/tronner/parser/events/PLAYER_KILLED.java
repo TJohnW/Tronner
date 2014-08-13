@@ -36,6 +36,6 @@ public class PLAYER_KILLED extends ServerEvent {
 
     @Override
     public void onEvent(ServerEventListener sel, String... args) {
-        sel.PLAYER_KILLED(args[0], args[1], f(args[2]), f(args[3]), i(args[4]), i(args[5]));
+        sel.PLAYER_KILLED(args[0], args[1], f(args[2]), f(args[3]), f(args[4]), f(args[5]));
     }
 }

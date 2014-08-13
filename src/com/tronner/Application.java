@@ -92,8 +92,8 @@ public class Application {
             readConfig();
             String clazz = getClass().getPackage().getName() + ".servers." + config.server.toLowerCase() + "." + config.server;
             Class serverPlugin = Class.forName(clazz);
-            ServerEventListener sel = (ServerEventListener) serverPlugin.newInstance();
-            parser = Parser.getInstance(); // add config for reflect on load
+            parser = Parser.getInstance(ServerEventListener.class); // we need this first here for our racing plugin
+            ServerEventListener sel = (ServerEventListener) serverPlugin.newInstance(); // add config for reflect on load
             return true;
         } catch(IndexOutOfBoundsException e) {
             //e.printStackTrace();

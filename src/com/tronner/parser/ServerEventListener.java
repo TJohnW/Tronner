@@ -34,7 +34,7 @@ public abstract class ServerEventListener {
     public void GAME_TIME(int time) {
     }
 
-    public void CYCLE_CREATED(String playerId, float xPosition, float yPosition, int xDirection, int yDirection) {
+    public void CYCLE_CREATED(String playerId, float xPosition, float yPosition, float xDir, float yDir) {
     }
 
     public void PLAYER_RENAMED(String oldName, String newName, String ip, String displayName) {
@@ -69,7 +69,7 @@ public abstract class ServerEventListener {
     public void DEATH_RUBBERZONE(String player) {
     }
 
-    public void PLAYER_KILLED(String player, String ip, float x, float y, int xDir, int yDir) {
+    public void PLAYER_KILLED(String player, String ip, float x, float y, float xDir, float yDir) {
     }
 
 }

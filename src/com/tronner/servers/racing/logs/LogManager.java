@@ -24,6 +24,8 @@
 
 package com.tronner.servers.racing.logs;
 
+import com.tronner.Application;
+import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
 import com.tronner.servers.racing.Racing;
@@ -153,6 +155,10 @@ public class LogManager extends ServerEventListener {
         return mapLogs.get(map).getRank(playerId);
     }
 
+    /**
+     * Gets the current log
+     * @return the log
+     */
     public MapLog getCurrentLog() {
         return currentLog;
     }
@@ -165,6 +171,8 @@ public class LogManager extends ServerEventListener {
     public void TARGETZONE_PLAYER_ENTER(int globalID, float zoneX, float zoneY,
                                         String playerId, float playerX, float playerY, float playerXDir,
                                         float playerYDir, float time) {
+        if(currentLog == null)
+            return;
 
         int oldRank = currentLog.getRank(playerId);
         double difference = currentLog.updateRecord(new PlayerTime(playerId, time));

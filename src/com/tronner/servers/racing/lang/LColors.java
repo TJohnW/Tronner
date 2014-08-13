@@ -113,5 +113,4 @@ public class LColors {
 
     public static final String LIGHT_BLUE = "0x99aaff"; // Map name in time/rank message
 
-
 }

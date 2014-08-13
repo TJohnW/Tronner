@@ -27,6 +27,7 @@ package com.tronner.servers.racing;
 import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
+import com.tronner.servers.racing.logs.LogManager;
 import com.tronner.servers.racing.players.PlayerManager;
 
 /**
@@ -55,6 +56,9 @@ public class RaceTimer extends ServerEventListener {
 
     @Override
     public void GAME_TIME(int time) {
+        if(LogManager.getInstance().getCurrentLog() == null)
+            return;
+
         if(playerManager.playersFinished() >= 1 && playerManager.playersRacing() >= 1) {
             timeLeft--;
             Commands.CENTER_MESSAGE(timeLeft + "                 ");

@@ -25,11 +25,11 @@
 package com.tronner.servers.racing.lang;
 
 /**
- * Tronner - LQueueManager
+ * Tronner - LQueue
  *
  * @author TJohnW on 8/6/2014.
  */
-public class LQueueManager {
+public class LQueue {
 
 
 }

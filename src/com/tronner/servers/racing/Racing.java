@@ -91,9 +91,9 @@ public class Racing extends ServerEventListener {
      * on script load.
      */
     public void initialize() {
-        Commands.CYCLE_RUBBER(-10);
-        Application.sleep(1000);
-        Commands.CYCLE_RUBBER(90);
+        Commands.CENTER_MESSAGE("Intializing script. Tronner Racing. 0xff98f9:D");
+        Commands.out("DELAY_COMMAND 0 SPAWN_ZONE death 0 0 70000");
+        Commands.out("DELAY_COMMAND +0 SPAWN_ZONE death 0 0 70000");
     }
 
     @Override
