@@ -24,6 +24,7 @@
 
 package com.tronner.parser;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,6 +61,7 @@ public class Parser {
     private Parser(Class commandClazz) {
         Parser.commandClazz = commandClazz;
         reflectEvents();
+        System.out.println(events.size() + " events reflected.");
     }
 
     /**
@@ -128,10 +130,10 @@ public class Parser {
         ServerEvent se = events.get(command);
         if(se != null) {
             se.onEvent(args);
-            System.out.println("# Input Handled: " + command);
+            //System.out.println("# Input Handled: " + command);
         }
         else {
-            System.out.println("Ignored input: " + command + " " + Arrays.toString(args));
+            //System.out.println("Ignored input: " + command + " " + Arrays.toString(args));
         }
     }
 
@@ -147,6 +149,7 @@ public class Parser {
     /**
      * Reflects the Events of the specified command class into the map
      */
+    /*
     private void reflectEvents() {
         for(Method m: commandClazz.getDeclaredMethods()) {
             String clazzToLoad = commandClazz.getPackage().getName() + ".events." + m.getName();
@@ -157,10 +160,63 @@ public class Parser {
             }
         }
     }
+    */
+
+
+    /**
+     * Reflects the Events of the specified command class into the map
+     * Newer experimental method of adding events.
+     * Is slightly slower but worth it imo.
+     */
+
+    private void reflectEvents() {
+        for(final Method m: commandClazz.getDeclaredMethods()) {
+            ServerEvent se = new ServerEvent() {
+
+                @Override
+                public void onEvent(ServerEventListener il, String... args) {
+                    try {
+
+                        Class<?>[] types = m.getParameterTypes();
+                        Object[] typeArgs = new Object[m.getParameterTypes().length];
+
+                        for(int i = 0; i < typeArgs.length; i++) {
+                            switch(types[i].getName()) {
+                                case "java.lang.String":
+                                    typeArgs[i] = args[i];
+                                    break;
+                                case "java.lang.Integer":
+                                case "int":
+                                    typeArgs[i] = i(args[i]);
+                                    break;
+                                case "java.lang.Float":
+                                case "java.lang.Double":
+                                case "float":
+                                case "double":
+                                    typeArgs[i] = f(args[i]);
+                                    break;
+                                default:
+                                    typeArgs[i] = types[i].cast(args[i]);
+                                    System.out.println("Tis a " + types[i].getName() + " attempting cast..");
+                            }
+                        }
+
+                        il.getClass().getMethod(m.getName(), m.getParameterTypes()).invoke(il, typeArgs);
+
+                    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+            setEvent(m.getName(), se);
+        }
+
+    }
 
     /**
      * Uses the ServerEventListener class and uses Reflection to
-     * attach the listeners neccessary to update the object about
+     * attach the listeners necessary to update the object about
      * events received.
      * @param sel the ServerEventListener to add as a listener
      */
