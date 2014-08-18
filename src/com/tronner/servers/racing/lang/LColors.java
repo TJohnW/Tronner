@@ -32,6 +32,12 @@ package com.tronner.servers.racing.lang;
 @SuppressWarnings("UnusedDeclaration")
 public class LColors {
 
+    public static final String CHAT_COLOR = "0xf7f77b";
+
+    public static final String TYLER_MAIN = "0xffecce";
+    public static final String TYLER_NAME = "0x9792c6";
+
+
     public static final String LIGHT_GREY = "0xe5e5e5"; //Typically used for Map by://
 
     public static final String MAROON = "0x883333"; //typically used for author's name//

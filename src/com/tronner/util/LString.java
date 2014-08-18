@@ -38,7 +38,7 @@ public class LString {
 
     private boolean prepped = false;
 
-    private List<String> args = new ArrayList<String>();
+    private List<String> args = new ArrayList<>();
 
     private String s;
 
@@ -46,12 +46,13 @@ public class LString {
         this.s = s;
     }
 
-    public void c(String word, String color) {
-        c(word, color, "");
+    public LString c(String word, String color) {
+        return c(word, color, "");
     }
 
-    public void c(String word, String color, String backToColor) {
-        s = s.replace(word, color+word+backToColor);
+    public LString c(String word, String color, String backToColor) {
+        s = s.replace(word, color.toLowerCase()+word+backToColor.toLowerCase());
+        return this;
     }
 
     public void prep() {
@@ -78,19 +79,25 @@ public class LString {
         prepped = true;
     }
 
-    public String parse(boolean output, String... args) {
+    public void parseRCM(Object... args) {
+        Commands.ROUND_CENTER_MESSAGE(parse(args));
+    }
+
+    public void parseOut(Object... args) {
+        Commands.CONSOLE_MESSAGE(parse(args));
+    }
+
+    public void parseOutPlayer(String player, Object... args) {
+        Commands.PLAYER_MESSAGE(player, parse(args));
+    }
+
+    public String parse(Object... args) {
         if(!prepped) prep();
         String out = s;
         for(int i = 0; i < args.length; i++) {
-            out = out.replace("["+i+"]", args[i]);
+            out = out.replace("["+i+"]", String.valueOf(args[i]));
         }
-        if(output)
-            Commands.CONSOLE_MESSAGE(out);
         return out;
-    }
-
-    public String parse(String... args) {
-        return parse(true, args);
     }
 
     public String getString() {

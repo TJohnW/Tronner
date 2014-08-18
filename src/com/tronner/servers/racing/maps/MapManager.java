@@ -27,8 +27,12 @@ package com.tronner.servers.racing.maps;
 import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
+import com.tronner.servers.racing.RaceTimer;
+import com.tronner.servers.racing.Racing;
 import com.tronner.servers.racing.logs.LogManager;
+import com.tronner.servers.racing.logs.PlayerTime;
 import com.tronner.servers.racing.players.PlayerManager;
+import com.tronner.servers.racing.lang.LRace;
 import com.tronner.util.JsonManager;
 
 import java.io.IOException;
@@ -43,6 +47,12 @@ import java.util.Map;
  */
 public class MapManager extends ServerEventListener {
 
+    private LogManager logger;
+
+    private PlayerManager playerManager;
+
+    private RaceTimer raceTimer;
+
     private Map<String, RacingMap> maps = new HashMap<>();
     {
         loadMaps();
@@ -55,13 +65,18 @@ public class MapManager extends ServerEventListener {
     private Rotation rotation = new Rotation(this);
 
     private RoundMapManager currentManager = rotation;
+    private int plays = -1;
+
 
     /**
      * Creates the MapManager and loads the maps
      */
-    public MapManager(PlayerManager pm) {
+    public MapManager(PlayerManager pm, LogManager lm, RaceTimer rt) {
         Parser.getInstance().reflectListeners(this);
         queue = new Queue(this, pm);
+        logger = lm;
+        playerManager = pm;
+        raceTimer = rt;
     }
 
     /**
@@ -145,16 +160,47 @@ public class MapManager extends ServerEventListener {
      */
     @Override
     public void ROUND_COMMENCING() {
-        if(currentMap != null)
-            LogManager.getInstance().unloadMapLog(currentMap.getName(), true);
+        if(currentMap != null  && plays >= Racing.MAP_PLAYS)
+            logger.unloadMapLog(currentMap.getName(), true);
 
         if(!currentManager.isActive())
             currentManager = rotation; // rotation is never "unactive"
 
-        currentMap = currentManager.next();
-        LogManager.getInstance().loadMapLog(currentMap.getName());
-        LogManager.getInstance().setCurrentLog(LogManager.getInstance().getLog(currentMap.getName()));
-        Commands.MAP_FILE(currentMap.getPath());
+        if(plays >= Racing.MAP_PLAYS || plays == -1) {
+            currentMap = currentManager.next();
+            logger.loadMapLog(currentMap.getName());
+            logger.setCurrentLog(logger.getLog(currentMap.getName()));
+            Commands.MAP_FILE(currentMap.getPath());
+            LRace.CURRENT_MAP.parseRCM(currentMap.getName(), currentMap.getAuthor());
+            plays = 1;
+        } else {
+            plays++;
+        }
+
+        if(logger.getCurrentLog().getPlayerFromRank(1) != null) {
+            raceTimer.setTimeLeft((int) logger.getCurrentLog().getPlayerFromRank(1).getTime().doubleValue() + 30);
+        }
+
+    }
+
+    @Override
+    public void GAME_TIME(int time) {
+        if(currentMap == null)
+            return;
+
+        if(time == -3) {
+            playerManager.notifyMapData(logger);
+            if(logger.getCurrentLog().count() > 0) {
+                String out = LRace.MAP_DATA_TOP.parse(currentMap.getName());
+                for(int i = 0; i < 3; i++) {
+                    PlayerTime current = logger.getCurrentLog().getPlayerFromRank(i+1);
+                    if(current != null) {
+                        out += "\\n" + LRace.MAP_DATA_TOP_TIME.parse(i+1, current.getTime(), current.getPlayer());
+                    } else break;
+                }
+                Commands.CONSOLE_MESSAGE(out);
+            }
+        }
     }
 
 }

@@ -137,7 +137,7 @@ public class Application {
 
     /**
      * Sleeps the application for a little :D
-     * Might replace this with having the plugin run as a thread.. dont know yet.
+     * Might replace this with having the plugin run as a thread.. don't know yet.
      */
     public static void sleep(int ms) {
         try {

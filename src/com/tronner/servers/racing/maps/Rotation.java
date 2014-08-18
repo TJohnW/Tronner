@@ -53,6 +53,15 @@ public class Rotation implements RoundMapManager {
         updateFromManager(mm);
     }
 
+
+    public void goTo(int indexToGo) {
+        if(maps.size() > indexToGo) {
+            currentIndex = indexToGo - 1;
+            if(currentIndex == -1)
+                currentIndex = maps.size() - 1;
+        }
+    }
+
     /**
      * Updates the rotation to match
      * the maps in the MapManager

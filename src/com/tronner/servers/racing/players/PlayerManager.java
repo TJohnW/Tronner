@@ -27,8 +27,10 @@ package com.tronner.servers.racing.players;
 import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
+import com.tronner.servers.racing.lang.LRace;
 import com.tronner.servers.racing.logs.LogManager;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +44,9 @@ public class PlayerManager extends ServerEventListener {
     private List<Player> players = new ArrayList<>();
 
     private String winner = "";
+
+    private int roundFinished = 0;
+    private int roundRacers = 0;
 
     public PlayerManager() {
         Parser.getInstance().reflectListeners(this);
@@ -78,12 +83,19 @@ public class PlayerManager extends ServerEventListener {
         return alive;
     }
 
+    /**
+     * Called from the logManager to add players finished this round.
+     */
+    public void setFinished(String player) {
+        Player p = playerFromID(player);
+        if(!p.isFinished()) {
+            p.setFinished(true);
+            roundFinished++;
+        }
+    }
+
     public int playersFinished() {
-        int finished = 0;
-        for (Player p : players)
-            if (p.isFinished())
-                finished++;
-        return finished;
+        return roundFinished;
     }
 
     public int playersRacing() {
@@ -94,17 +106,56 @@ public class PlayerManager extends ServerEventListener {
         return racing;
     }
 
+    /**
+     * The number of players who started racing this round
+     * @return
+     */
+    public int playersStarted() {
+        return roundRacers;
+    }
+
     public void killAll() {
         for (Player p : players)
             Commands.KILL(p.getId());
     }
 
+
+    /**
+     * Called to notify all of the players of their current times
+     * on each map
+     */
+    public void notifyMapData(LogManager logger) {
+        for(Player p: players) {
+            int totalRanks = logger.getCurrentLog().count();
+            int rank = logger.getCurrentLog().getRank(p.getId());
+            if(rank != -1) {
+                BigDecimal time = logger.getCurrentLog().getTime(p.getId());
+                LRace.PLAYER_DATA.parseOutPlayer(p.getId(), logger.getCurrentLog().getMapName(), time, rank, totalRanks);
+            } else {
+                LRace.PLAYER_DATA_UNRANKED.parseOutPlayer(p.getId(), logger.getCurrentLog().getMapName(), totalRanks);
+            }
+        }
+    }
+
+    @Override
+    public void ONLINE_PLAYER(String name) {
+        Player p = playerFromID(name);
+        if (p == null) {
+            p = new Player(name);
+            addPlayer(p);
+            System.out.println("Player created without entering, was this because the script was started during gameplay?");
+        }
+    }
+
     @Override
     public void ROUND_COMMENCING() {
+        roundFinished = 0;
+        roundRacers = 0;
         winner = "";
         for (Player p : players) {
             p.setAlive(false);
             p.setFinished(false);
+            p.setRacing(false);
         }
     }
 
@@ -118,14 +169,34 @@ public class PlayerManager extends ServerEventListener {
             System.out.println("Player created without entering, was this because the script was started during gameplay?");
         }
         p.setAlive(true);
+        p.setRacing(true);
+        roundRacers += 1;
     }
 
     /**
      * Declares the round winner when all racing is done
      */
     public void declareWinner() {
-        Commands.DECLARE_ROUND_WINNER(winner);
         Commands.CENTER_MESSAGE("Winner: " + winner + "                  ");
+        endRound();
+    }
+
+    /**
+     * Finds any player who was racing or is racing to declare the winor!
+     * Also kills all players who are alive and not finished yet
+     */
+    public void endRound() {
+        boolean declared = false;
+        for(Player p: players) {
+            if(p.isRacing()) {
+                if(!declared) {
+                    Commands.DECLARE_ROUND_WINNER(p.getId());
+                    declared = true;
+                }
+                if(p.isAlive() && !p.isFinished())
+                    Commands.KILL(p.getId());
+            }
+        }
     }
 
     @Override
@@ -141,10 +212,12 @@ public class PlayerManager extends ServerEventListener {
         if ("".equals(winner)) {
             winner = playerId;
         }
-        if (!p.isFinished())
-            p.setFinished(true);
     }
 
+    /**
+     * Called when a player dies
+     * @param player the player who died
+     */
     public void death(String player) {
         Player p = playerFromID(player);
         if (p != null)
@@ -194,5 +267,9 @@ public class PlayerManager extends ServerEventListener {
     @Override
     public void PLAYER_LEFT(String player, String ip) {
         removePlayer(player);
+    }
+
+    public void reset() {
+        players = new ArrayList<>();
     }
 }

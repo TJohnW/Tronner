@@ -24,15 +24,17 @@
 
 package com.tronner.servers.racing;
 
+import com.sun.media.sound.RIFFInvalidDataException;
 import com.tronner.Application;
 import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
+import com.tronner.servers.racing.lang.LColors;
 import com.tronner.servers.racing.logs.LogManager;
 import com.tronner.servers.racing.maps.MapManager;
 import com.tronner.servers.racing.players.PlayerManager;
 
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * Tronner - Racing
@@ -44,6 +46,8 @@ public class Racing extends ServerEventListener {
 
     public static final String PATH_TIMES = "times/";
 
+    public static final int MAP_PLAYS = 2;
+
     private PlayerManager playerManager;
 
     private RaceTimer timer;
@@ -51,6 +55,16 @@ public class Racing extends ServerEventListener {
     private LogManager logger;
 
     private MapManager mapManager;
+
+    private Map<String, String> jokesters = new HashMap<String, String>()
+    {{
+        put("rawrica@forums", "0x55bbff|0xffffffErica");
+        put("TJohnW@forums", "0xf0e090Tristan");
+        put("alekzander@forums", "0x779977|0xffffffEk");
+        put("Zwazi@aagid", "0x00ff88|0xffffffZwazi");
+    }};
+
+
 
     /**
      * Initializes all of the listeners
@@ -75,12 +89,11 @@ public class Racing extends ServerEventListener {
 
         timer = new RaceTimer(playerManager);
 
-        // This is a singleton because it is needed in multiple managers,
-        // might think of a better idea, but for now I dont want to restructure
-        // again...
-        logger = LogManager.getInstance();
+        logger = new LogManager(playerManager);
 
-        mapManager = new MapManager(playerManager);
+        mapManager = new MapManager(playerManager, logger, timer);
+
+        new AFKKiller(playerManager, timer);
 
         Parser.getInstance().reflectListeners(this);
 
@@ -94,12 +107,41 @@ public class Racing extends ServerEventListener {
         Commands.CENTER_MESSAGE("Intializing script. Tronner Racing. 0xff98f9:D");
         Commands.out("DELAY_COMMAND 0 SPAWN_ZONE death 0 0 70000");
         Commands.out("DELAY_COMMAND +0 SPAWN_ZONE death 0 0 70000");
+        Commands.out("CYCLE_RUBBER -90");
+        Application.sleep(500);
+        Commands.out("CYCLE_RUBBER 90");
     }
 
     @Override
     public void INVALID_COMMAND(String... args) {
         //[/q, TJohnW@forums, 76.185.188.37, -2, add, Telepo]
         System.out.println(Arrays.toString(args));
+        if(args[0].equals("/r") && jokesters.containsKey(args[1])) {
+            String message = "";
+            for(int i = 4; i < args.length; i++) {
+                message += " " + args[i];
+            }
+
+            String reversed = new StringBuilder(message).reverse().toString();
+
+            Commands.CONSOLE_MESSAGE(jokesters.get(args[1]) + LColors.CHAT_COLOR + ": " + reversed);
+            for(String name: jokesters.keySet()) {
+                if(!name.equals(args[1])) {
+                    Commands.PLAYER_MESSAGE(name, "Jokes.us from " + jokesters.get(args[1]) + LColors.CHAT_COLOR + ":" + message);
+                }
+            }
+        } else if(args[0].equals("/clearplayers") && jokesters.containsKey(args[1])) {
+            playerManager.reset();
+        } else if(args[0].equals("/goto") && jokesters.containsKey(args[1]) && args.length > 4) {
+            try {
+                int indexToGo = Integer.parseInt(args[4]);
+                mapManager.getRotation().goTo(indexToGo);
+            } catch(NumberFormatException nfe) {
+
+            }
+        }
     }
+
+    
 
 }

@@ -25,6 +25,7 @@
 package com.tronner.servers.racing.logs;
 
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -40,7 +41,7 @@ public class MapLog {
     public static Comparator<PlayerTime> comparator = new Comparator<PlayerTime>() {
         @Override
         public int compare(PlayerTime o1, PlayerTime o2) {
-            return (o1.getTime() < o2.getTime()) ? -1 : 1;
+            return o1.getTime().compareTo(o2.getTime());
         }
     };
 
@@ -67,26 +68,10 @@ public class MapLog {
      */
     public MapLog(String mapName) { map = mapName; }
 
-    /**
-     * Here to speed up quick access of the players ranks
-     * at the start of the round and when loaded into memory
-     */
-    public void cache() {
-        ranks = new HashMap<>();
-        for(int i = 0; i < records.size(); i++) {
-            PlayerTime pt = records.get(i);
-            pt.setRank(i+1);
-            ranks.put(pt.getPlayer(), pt);
-        }
-    }
-
-    /**
-     * Sorts the records.
-     */
-    public void sort() {
-        Collections.sort(records, comparator);
-        System.out.println("Number of records now sorted: " + records.size());
-        cache();
+    public PlayerTime getPlayerFromRank(int rank) {
+        if(records.size() >= rank)
+            return records.get(rank - 1);
+        return null;
     }
 
     /**
@@ -102,22 +87,34 @@ public class MapLog {
     }
 
     /**
+     * Gets the time of a player on this map
+     * @param playerId the player to get
+     * @return the time
+     */
+    public BigDecimal getTime(String playerId) {
+        PlayerTime pt = ranks.get(playerId);
+        if(pt != null)
+            return pt.getTime();
+        return null;
+    }
+
+    /**
      * Updates the record for a player, and returns
      * their new rank. Will also add a new record
      * if they dont have one already
      * returns difference in time + for slower - for faster
      * @param playerTime The PlayerTime object to update
      */
-    public double updateRecord(PlayerTime playerTime) {
+    public BigDecimal updateRecord(PlayerTime playerTime) {
         // Fancy caching help here
-        double difference = 0.0d;
+        BigDecimal difference = BigDecimal.ZERO;
         if(ranks.containsKey(playerTime.getPlayer())) {
-            difference = playerTime.getTime() - ranks.get(playerTime.getPlayer()).getTime();
-            if(playerTime.getTime() < ranks.get(playerTime.getPlayer()).getTime()) {
+            difference = playerTime.getTime().subtract(ranks.get(playerTime.getPlayer()).getTime());
+            if(difference.compareTo(BigDecimal.ZERO) < 0) {
                 ranks.get(playerTime.getPlayer()).setTime(playerTime.getTime());
             } else {
                 // no change in this players rank, lets not re sort
-                return getRank(playerTime.getPlayer());
+                return difference;
             }
         } else {
             records.add(playerTime);
@@ -140,4 +137,37 @@ public class MapLog {
         return true;
     }
 
+    /**
+     * Gets the amount of ranks on this map
+     * @return the amount of times
+     */
+    public int count() {
+        return ranks.size();
+    }
+
+    /**
+     * Sorts the records.
+     */
+    public void sort() {
+        Collections.sort(records, comparator);
+        System.out.println("Number of records now sorted: " + records.size());
+        cache();
+    }
+
+    /**
+     * Here to speed up quick access of the players ranks
+     * at the start of the round and when loaded into memory
+     */
+    private void cache() {
+        ranks = new HashMap<>();
+        for(int i = 0; i < records.size(); i++) {
+            PlayerTime pt = records.get(i);
+            pt.setRank(i+1);
+            ranks.put(pt.getPlayer(), pt);
+        }
+    }
+
+    public String getMapName() {
+        return map;
+    }
 }

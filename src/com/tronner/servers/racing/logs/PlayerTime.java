@@ -24,6 +24,8 @@
 
 package com.tronner.servers.racing.logs;
 
+import java.math.BigDecimal;
+
 /**
  * Tronner - PlayerTime
  *
@@ -39,7 +41,7 @@ public class PlayerTime {
     /**
      * The players time
      */
-    private double time;
+    private BigDecimal time;
 
     /**
      * The players name
@@ -53,7 +55,7 @@ public class PlayerTime {
      */
     public PlayerTime(String player, double time) {
         this.player = player;
-        this.time = time;
+        this.time = truncateDecimal(time, 2);
     }
 
     /**
@@ -77,6 +79,14 @@ public class PlayerTime {
      * @param newTime the new time
      */
     public void setTime(double newTime) {
+        time = truncateDecimal(newTime, 2);
+    }
+
+    /**
+     * Updates time to a new big decimal
+     * @param newTime
+     */
+    public void setTime(BigDecimal newTime) {
         time = newTime;
     }
 
@@ -84,7 +94,7 @@ public class PlayerTime {
      * Gets the time.
      * @return the time
      */
-    public double getTime() {
+    public BigDecimal getTime() {
         return time;
     }
 
@@ -113,4 +123,13 @@ public class PlayerTime {
     public boolean equals(Object pt) {
         return (pt instanceof PlayerTime) && ((PlayerTime) pt).getPlayer().equals(player);
     }
+
+    private static BigDecimal truncateDecimal(double x, int numberOfDecimals) {
+        if ( x > 0) {
+            return new BigDecimal(String.valueOf(x)).setScale(numberOfDecimals, BigDecimal.ROUND_FLOOR);
+        } else {
+            return new BigDecimal(String.valueOf(x)).setScale(numberOfDecimals, BigDecimal.ROUND_CEILING);
+        }
+    }
+
 }

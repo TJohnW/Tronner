@@ -37,9 +37,12 @@ import com.tronner.servers.racing.players.PlayerManager;
  */
 public class RaceTimer extends ServerEventListener {
 
-    private int timeLeft = 100;
+    private int gameTime = -1;
+
+    private int timeLeft = 60;
 
     private PlayerManager playerManager;
+    private boolean roundOver = false;
 
     public RaceTimer(PlayerManager pm) {
         Parser.getInstance().reflectListeners(this);
@@ -55,17 +58,37 @@ public class RaceTimer extends ServerEventListener {
     }
 
     @Override
+    public void ROUND_COMMENCING() {
+        timeLeft = 60;
+        roundOver = false;
+    }
+
+    @Override
     public void GAME_TIME(int time) {
-        if(LogManager.getInstance().getCurrentLog() == null)
+        gameTime = time;
+        if(roundOver)
             return;
 
-        if(playerManager.playersFinished() >= 1 && playerManager.playersRacing() >= 1) {
+        if((playerManager.playersFinished() > 0 || playerManager.playersRacing() < 2) && playerManager.playersRacing() > 0 && playerManager.playersStarted() > 1) {
             timeLeft--;
             Commands.CENTER_MESSAGE(timeLeft + "                 ");
         }
 
-        if(timeLeft <= 0 || playerManager.playersRacing() <= 0)
-            playerManager.declareWinner();
+        if(timeLeft <= 0 || playerManager.playersRacing() < 1) {
+            if(playerManager.playersFinished() > 0)
+                playerManager.declareWinner();
+            else
+                playerManager.endRound();
+            roundOver = true;
+        }
+
     }
 
+    /**
+     * Gets the game time
+     * @return the game time
+     */
+    public int getGameTime() {
+        return gameTime;
+    }
 }

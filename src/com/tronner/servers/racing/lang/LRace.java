@@ -39,46 +39,73 @@ public class LRace {
      * Takes arguments,
      * author and player
      */
-    public static LString CURRENT_MAP = new LString(
-            "[author]: [player]"
-    );
-    static {
-        CURRENT_MAP.c("[author]", LColors.MAROON, LColors.WHITE);
-        CURRENT_MAP.c("[player]", LColors.MAROON);
-    }
+    public static LString CURRENT_MAP = new LString("[map] by [author]                       ") {{
+        c("[author]", LColors.MAROON, LColors.WHITE);
+        c("[map]", LColors.WHITE, LColors.LIGHT_GREY);
+    }};
+
+
+    public static LString PLAYER_DATA = new LString("Your best time for [map] is [time]\\\" ranking [place] of [total].") {{
+        c("Your", LColors.TYLER_MAIN);
+        c("[map]", LColors.TYLER_NAME, LColors.TYLER_MAIN);
+        c("[time]\\\"", LColors.TYLER_NAME, LColors.TYLER_MAIN);
+        c("[place]", LColors.TYLER_NAME, LColors.TYLER_MAIN);
+    }};
+
+
+    public static LString PLAYER_DATA_UNRANKED = new LString("You have never finished [map]. There are [total] ranks.") {{
+        c("You", LColors.TYLER_MAIN);
+        c("[map]", LColors.TYLER_NAME, LColors.TYLER_MAIN);
+        c("[time]\\\"", LColors.TYLER_NAME, LColors.TYLER_MAIN);
+        c("[total]", LColors.TYLER_NAME, LColors.TYLER_MAIN);
+    }};
+
 
     /**
      * Improved faster but same rank
      */
-    public static LString PLAYER_FINISHED_FASTER_REMAINS = new LString(
-            "> [player] finished in [time] seconds ([change]s faster) and remains at rank [rank]."
+    public static LString PLAYER_FINISHED = new LString("+ [player] finished in [time]\\\" ([data]) and [about] rank [rank].") {{
+        c("+", LColors.TYLER_MAIN);
+        c("[player]", LColors.TYLER_NAME, LColors.TYLER_MAIN);
+        c("[time]\\\"", LColors.TYLER_NAME, LColors.TYLER_MAIN);
+        c("[rank]", LColors.TYLER_NAME, LColors.TYLER_MAIN);
+    }};
+
+
+    public static LString TIME_DATA_FASTER = new LString("-[time]") {{
+        c("-[time]", LColors.GREEN, LColors.TYLER_MAIN);
+    }};
+
+
+    public static LString TIME_DATA_SLOWER = new LString("+[time]") {{
+        c("+[time]", LColors.RED,  LColors.TYLER_MAIN);
+    }};
+
+
+    public static LString TIME_DATA_UNRANKED = new LString("Unranked") {{
+        c("Unranked", LColors.WHITE,  LColors.TYLER_MAIN);
+    }};
+
+    public static LString MAP_DATA_TOP = new LString("Top times for [map]:") {{
+        c("Top", "0xb4cec1");
+        c("[map]", "0xdc4b50", LColors.TYLER_MAIN);
+    }};
+
+    public static LString MAP_DATA_TOP_TIME = new LString("[place]) [player]\\\" | [time]") {{
+        c("[place])", LColors.WHITE, "0x79a0a7");
+        c("|", "0x808080", "0x79a0a7");
+    }};
+
+    public static LString RECORD_FIRST = new LString(
+            "0xff3333*0xffff33*0x33ff33*0x3366ff*0xffd700Congratulate 0xffffff[player] 0xffd700for setting a new record on 0xffddaa[map] 0xffd700as the fastest time ever!0xff3333*0xffff33*0x33ff33*0x3366ff*"
     );
-    static {
 
-    }
-
-    /**
-     * Slower
-     */
-    public static LString PLAYER_FINISHED_SLOWER = new LString(
-            "> [player] finished in [time] seconds ([change]s slower) and remains at rank [rank]."
+    public static LString RECORD_SECOND = new LString(
+            "0xff3333*0xffff33*0x33ff33*0x3366ff*0xffffff[player] 0xc0c0c0just ranked as the 0xffffff2nd 0xc0c0c0fastest time for [map]!0xff3333*0xffff33*0x33ff33*0x3366ff*"
     );
 
-    /**
-     * Unranked!
-     */
-    public static LString PLAYER_FINISHED_FASTER_TOOK = new LString(
-            "[player] finished in [time] seconds and [improved] rank [rank]."
+    public static LString RECORD_THIRD = new LString(
+            "0xff3333*0xffff33*0x33ff33*0x3366ff*0xffffff[player] 0xcd7f32just ranked as the 0xffcc003rd 0xcd7f32fastest time for [map]!0xff3333*0xffff33*0x33ff33*0x3366ff*"
     );
 
-    public static LString PLAYER_FINISHED_URANKED = new LString(
-            "[player] finished in [time] seconds and [improved] rank [rank]."
-    );
-
-    /*
-    {$ar->c->r->a}> {$ar->c->r->b}[player] {$ar->c->r->a}finished in {$ar->c->r->c}[time] {$ar->c->r->a}seconds ({$ar->c->r->d}[change]s {$ar->c->r->e}slower{$ar->c->r->a}) and remains at rank {$ar->c->r->d}[rank]{$ar->c->r->a}."; // make sure to put { } around the variables :D
-    $ar->o->race_fin_fast_nr  = "{$ar->c->r->a}> {$ar->c->r->b}[player] {$ar->c->r->a}finished in {$ar->c->r->c}[time] {$ar->c->r->a}seconds ({$ar->c->r->d}[change]s {$ar->c->r->f}faster{$ar->c->r->a}) and remains at rank {$ar->c->r->d}[rank]{$ar->c->r->a}.";
-    $ar->o->race_fin_fast_ur  = "{$ar->c->r->a}> {$ar->c->r->b}[player] {$ar->c->r->a}finished in {$ar->c->r->c}[time] {$ar->c->r->a}seconds ({$ar->c->r->d}[change]s {$ar->c->r->f}faster{$ar->c->r->a}) and rose to rank {$ar->c->r->d}[rank]{$ar->c->r->a} ({$ar->c->r->d}previously ranked [oldRank]{$ar->c->r->a}).";
-    $ar->o->race_fin_fast_tr  = "{$ar->c->r->a}> {$ar->c->r->b}[player] {$ar->c->r->a}finished in {$ar->c->r->c}[time] {$ar->c->r->a}seconds ({$ar->c->r->d}Unranked{$ar->c->r->a}) and took rank {$ar->c->r->d}[rank]{$ar->c->r->a}.";
-    */
 }

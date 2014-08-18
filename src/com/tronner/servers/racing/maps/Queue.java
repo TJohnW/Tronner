@@ -187,31 +187,16 @@ public class Queue extends ServerEventListener implements RoundMapManager {
                 qRemove(player, accessLevel, args[5]);
                 break;
 
-            case "clear":
-
-                qClear(player, accessLevel);
+            case "clear": qClear(player, accessLevel);
                 break;
-
-            case "start":
-
-                qStart(player, accessLevel);
+            case "start": qStart(player, accessLevel);
                 break;
-
-            case "stop":
-
-                qStop(player, accessLevel);
+            case "stop": qStop(player, accessLevel);
                 break;
-
-            case "enable":
-
-                qEnable(player, accessLevel);
+            case "enable": qEnable(player, accessLevel);
                 break;
-
-            case "disable":
-
-                qDisable(player, accessLevel);
+            case "disable": qDisable(player, accessLevel);
                 break;
-
             default:
 
                 break;

@@ -24,14 +24,17 @@
 
 package com.tronner.servers.racing.logs;
 
-import com.tronner.Application;
 import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
+import com.tronner.servers.racing.lang.LColors;
+import com.tronner.servers.racing.players.PlayerManager;
 import com.tronner.servers.racing.Racing;
+import com.tronner.servers.racing.lang.LRace;
 import com.tronner.util.JsonManager;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,24 +45,15 @@ import java.util.Map;
  */
 public class LogManager extends ServerEventListener {
 
-    private static LogManager instance = null;
-
     private Map<String, MapLog> mapLogs = new HashMap<>();
 
     private MapLog currentLog;
 
-    private LogManager() {
-        Parser.getInstance().reflectListeners(this);
-    }
+    private PlayerManager playerManager;
 
-    /**
-     * Creates our singleton LogManager
-     * @return the LogManager
-     */
-    public static LogManager getInstance() {
-        if(instance == null)
-            instance = new LogManager();
-        return instance;
+    public LogManager(PlayerManager pm) {
+        Parser.getInstance().reflectListeners(this);
+        this.playerManager = pm;
     }
 
     /**
@@ -163,6 +157,10 @@ public class LogManager extends ServerEventListener {
         return currentLog;
     }
 
+    /**
+     * Sets teh current log
+     * @param currentLog the log to set
+     */
     public void setCurrentLog(MapLog currentLog) {
         this.currentLog = currentLog;
     }
@@ -171,11 +169,48 @@ public class LogManager extends ServerEventListener {
     public void TARGETZONE_PLAYER_ENTER(int globalID, float zoneX, float zoneY,
                                         String playerId, float playerX, float playerY, float playerXDir,
                                         float playerYDir, float time) {
-        if(currentLog == null)
+
+        if(currentLog == null || playerManager.playerFromID(playerId).isFinished())
             return;
 
+        playerManager.setFinished(playerId);
+
         int oldRank = currentLog.getRank(playerId);
-        double difference = currentLog.updateRecord(new PlayerTime(playerId, time));
+        PlayerTime pt = new PlayerTime(playerId, time);
+        BigDecimal difference = currentLog.updateRecord(pt);
+        int newRank = currentLog.getRank(playerId);
+
+        String data;
+        String about;
+
+        if(oldRank == -1) {
+            data = LRace.TIME_DATA_UNRANKED.parse();
+        } else if(difference.compareTo(BigDecimal.ZERO) < 0) {
+            data = LRace.TIME_DATA_FASTER.parse(String.valueOf(difference.abs()));
+        } else {
+            data = LRace.TIME_DATA_SLOWER.parse(String.valueOf(difference));
+        }
+
+        if(oldRank == -1 || difference.compareTo(BigDecimal.ZERO) < 0) {
+            if(newRank == 1) {
+                LRace.RECORD_FIRST.parseOut(playerId, currentLog.getMapName());
+            } else if(newRank == 2) {
+                LRace.RECORD_SECOND.parseOut(playerId, currentLog.getMapName());
+            } else if(newRank == 3) {
+                LRace.RECORD_THIRD.parseOut(playerId, currentLog.getMapName());
+            }
+        }
+
+        if(oldRank == -1) {
+            about = "took";
+        } else if(newRank < oldRank) {
+            about = "rose to";
+        } else {
+            about = "remains at";
+        }
+
+        LRace.PLAYER_FINISHED.parseOut(playerId, pt.getTime(), data, about, newRank);
+
     }
 
 }

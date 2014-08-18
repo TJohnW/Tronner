@@ -40,6 +40,7 @@ public class Player {
     private boolean alive = false;
 
     private boolean finished = false;
+    private boolean racing = false;
 
     public Player(String id) {
         this.id = id;
@@ -91,5 +92,13 @@ public class Player {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    public void setRacing(boolean racing) {
+        this.racing = racing;
+    }
+
+    public boolean isRacing() {
+        return racing;
     }
 }

@@ -64,7 +64,7 @@ public class Commands {
     }
 
     public static void ROUND_CENTER_MESSAGE(String message) {
-        out("ROUND_CENTER_MESSAGE" + message);
+        out("ROUND_CENTER_MESSAGE " + message);
     }
 
     public static void KILL(String playerName) {
@@ -76,7 +76,7 @@ public class Commands {
     }
 
     public static void PLAYER_MESSAGE(String receiver, String message) {
-        out("PLAYER_MESSAGE " + receiver + " " + message);
+        out("player_message " + receiver + " " + "\"" + message + "\"");
     }
 
     public static void DECLARE_ROUND_WINNER(String player) {
