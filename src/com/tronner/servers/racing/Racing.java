@@ -24,7 +24,6 @@
 
 package com.tronner.servers.racing;
 
-import com.sun.media.sound.RIFFInvalidDataException;
 import com.tronner.Application;
 import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
@@ -33,8 +32,11 @@ import com.tronner.servers.racing.lang.LColors;
 import com.tronner.servers.racing.logs.LogManager;
 import com.tronner.servers.racing.maps.MapManager;
 import com.tronner.servers.racing.players.PlayerManager;
+import com.tronner.util.Crayola;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Tronner - Racing
@@ -139,6 +141,11 @@ public class Racing extends ServerEventListener {
             } catch(NumberFormatException nfe) {
 
             }
+        } else if(args[0].equals("/crayola")) {
+            String out = "Crayola Colors: " + Crayola.colorList;
+            Commands.PLAYER_MESSAGE(args[1], out);
+        } else if(args[0].equals("/resetMaps") && jokesters.containsKey(args[1])) {
+            mapManager.loadMaps();
         }
     }
 

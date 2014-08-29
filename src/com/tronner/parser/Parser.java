@@ -24,6 +24,8 @@
 
 package com.tronner.parser;
 
+import org.apache.commons.lang3.ClassUtils;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -163,56 +165,68 @@ public class Parser {
     */
 
 
+
     /**
      * Reflects the Events of the specified command class into the map
      * Newer experimental method of adding events.
      * Is slightly slower but worth it imo.
+     * Reflects events using primitive and primitive wrapper
+     * types to the methods.
      */
-
     private void reflectEvents() {
+
         for(final Method m: commandClazz.getDeclaredMethods()) {
-            ServerEvent se = new ServerEvent() {
+
+            final Class<?>[] types = m.getParameterTypes();
+            setEvent(m.getName(), new ServerEvent() {
 
                 @Override
                 public void onEvent(ServerEventListener il, String... args) {
-                    try {
 
-                        Class<?>[] types = m.getParameterTypes();
-                        Object[] typeArgs = new Object[m.getParameterTypes().length];
+                    Object[] params = new Object[types.length];
 
-                        for(int i = 0; i < typeArgs.length; i++) {
-                            switch(types[i].getName()) {
-                                case "java.lang.String":
-                                    typeArgs[i] = args[i];
-                                    break;
-                                case "java.lang.Integer":
-                                case "int":
-                                    typeArgs[i] = i(args[i]);
-                                    break;
-                                case "java.lang.Float":
-                                case "java.lang.Double":
-                                case "float":
-                                case "double":
-                                    typeArgs[i] = f(args[i]);
-                                    break;
-                                default:
-                                    typeArgs[i] = types[i].cast(args[i]);
-                                    System.out.println("Tis a " + types[i].getName() + " attempting cast..");
-                            }
+                    /* Now lets parse all of the params into their expected types */
+                    /* Lets start with fixing the primitive types */
+
+                    for (int i = 0; i < types.length; i++) {
+
+                        Class<?> type = types[i];
+                        if (type.isPrimitive())
+                            type = ClassUtils.primitiveToWrapper(type);
+
+                        /* If its a string, leave it be */
+                        if(type.getSimpleName().equals("String")) {
+                            params[i] = args[i];
+                            continue;
                         }
 
-                        il.getClass().getMethod(m.getName(), m.getParameterTypes()).invoke(il, typeArgs);
+                        if (type.isArray() && i == types.length - 1)
+                            params[i] = Arrays.copyOfRange(args, i, args.length, String[].class);
 
-                    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                        else {
+                            try {
+                                params[i] = type.getMethod("valueOf", String.class).invoke(null, args[i]);
+                            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                                e.printStackTrace();
+                                System.out.println("There was an error parsing the value of an event.");
+                            }
+                        }
+                    }
+
+                    try {
+                        m.invoke(il, params);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
+                        System.out.println("There was an error invoking the method using reflection.");
                     }
                 }
-            };
 
-            setEvent(m.getName(), se);
+            });
+
         }
 
     }
+
 
     /**
      * Uses the ServerEventListener class and uses Reflection to
@@ -224,9 +238,8 @@ public class Parser {
         Class clazz = sel.getClass();
         for(Method m: clazz.getDeclaredMethods()) {
             ServerEvent se = getEvent(m.getName());
-            if(se == null)
-                continue;
-            se.addListener(sel);
+            if(se != null)
+                se.addListener(sel);
         }
     }
 
