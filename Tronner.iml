@@ -11,7 +11,8 @@
     <orderEntry type="library" exported="" name="commons-collections4-4.0" level="project" />
     <orderEntry type="library" exported="" name="gson-2.2.4-javadoc" level="project" />
     <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
-    <orderEntry type="library" exported="" name="indexed-tree-map" level="project" />
+    <orderEntry type="library" exported="" name="commons-lang3-3.3.2" level="project" />
+    <orderEntry type="library" exported="" name="asm-all-5.0.3" level="project" />
   </component>
 </module>
 

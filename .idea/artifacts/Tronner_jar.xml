@@ -3,8 +3,9 @@
     <output-path>$PROJECT_DIR$/out/artifacts/Tronner_jar</output-path>
     <root id="archive" name="Tronner.jar">
       <element id="module-output" name="Tronner" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/Chrome Downloads/mysql-connector-java-5.1.31/mysql-connector-java-5.1.31-bin.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/gson-2.2.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-lang3-3.3.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/asm-all-5.0.3.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
