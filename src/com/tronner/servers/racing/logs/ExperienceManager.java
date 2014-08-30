@@ -75,7 +75,7 @@ public class ExperienceManager {
 
     public void saveXPLog() {
         try {
-            JsonManager.saveAsJson("data/xp.JSON",players, true);
+            JsonManager.saveAsJson("data/xp.JSON", players, true);
         } catch (IOException e) {
             System.out.println("Unable to save xp log.");
         }

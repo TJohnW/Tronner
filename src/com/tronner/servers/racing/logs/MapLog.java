@@ -170,4 +170,9 @@ public class MapLog {
     public String getMapName() {
         return map;
     }
+
+    public List<PlayerTime> getRecords() {
+        return records;
+    }
+
 }

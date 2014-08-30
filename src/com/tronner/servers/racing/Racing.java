@@ -32,6 +32,7 @@ import com.tronner.servers.racing.lang.LColors;
 import com.tronner.servers.racing.logs.LogManager;
 import com.tronner.servers.racing.maps.MapManager;
 import com.tronner.servers.racing.players.PlayerManager;
+import com.tronner.servers.racing.rankings.RankingsManager;
 import com.tronner.util.Crayola;
 
 import java.util.Arrays;
@@ -57,6 +58,8 @@ public class Racing extends ServerEventListener {
     private LogManager logger;
 
     private MapManager mapManager;
+
+    private RankingsManager rankingsManager;
 
     private Map<String, String> jokesters = new HashMap<String, String>()
     {{
@@ -95,6 +98,8 @@ public class Racing extends ServerEventListener {
 
         mapManager = new MapManager(playerManager, logger, timer);
 
+        rankingsManager = new RankingsManager(playerManager, mapManager);
+
         new AFKKiller(playerManager, timer);
 
         Parser.getInstance().reflectListeners(this);
@@ -112,6 +117,13 @@ public class Racing extends ServerEventListener {
         Commands.out("CYCLE_RUBBER -90");
         Application.sleep(500);
         Commands.out("CYCLE_RUBBER 90");
+    }
+
+    @Override
+    public void ROUND_COMMENCING() {
+        if(!logger.isRankingsUpdated())
+            rankingsManager.threadedUpdate();
+        logger.setRankingsUpdated(true);
     }
 
     @Override
@@ -141,14 +153,44 @@ public class Racing extends ServerEventListener {
             } catch(NumberFormatException nfe) {
 
             }
-        } else if(args[0].equals("/crayola")) {
+        }
+        else if(args[0].equals("/crayola")) {
             String out = "Crayola Colors: " + Crayola.colorList;
             Commands.PLAYER_MESSAGE(args[1], out);
-        } else if(args[0].equals("/resetMaps") && jokesters.containsKey(args[1])) {
+        }
+        else if(args[0].equals("/resetMaps") && jokesters.containsKey(args[1])) {
             mapManager.loadMaps();
+        }
+        else if(args[0].equals("/debug")) {
+            debug();
         }
     }
 
+
+    public void debug() {
+
+        int mb = 1024*1024;
+
+        //Getting the runtime reference from system
+        Runtime runtime = Runtime.getRuntime();
+
+        System.out.println("##### Heap utilization statistics [MB] #####");
+
+        //Print used memory
+        System.out.println("# Used Memory:"
+                + (runtime.totalMemory() - runtime.freeMemory()) / mb);
+
+        //Print free memory
+        System.out.println("# Free Memory:"
+                + runtime.freeMemory() / mb);
+
+        //Print total available memory
+        System.out.println("# Total Memory:" + runtime.totalMemory() / mb);
+
+        //Print Maximum available memory
+        System.out.println("# Max Memory:" + runtime.maxMemory() / mb);
+
+    }
     
 
 }

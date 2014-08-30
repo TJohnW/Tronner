@@ -24,10 +24,8 @@
 
 package com.tronner.servers.racing.logs;
 
-import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
-import com.tronner.servers.racing.lang.LColors;
 import com.tronner.servers.racing.players.PlayerManager;
 import com.tronner.servers.racing.Racing;
 import com.tronner.servers.racing.lang.LRace;
@@ -50,6 +48,8 @@ public class LogManager extends ServerEventListener {
     private MapLog currentLog;
 
     private PlayerManager playerManager;
+
+    private boolean isRankingsUpdated = true;
 
     public LogManager(PlayerManager pm) {
         Parser.getInstance().reflectListeners(this);
@@ -91,20 +91,22 @@ public class LogManager extends ServerEventListener {
      * @param mapName the map to load the log for.
      */
     public void loadMapLog(String mapName, boolean createOnFail) {
+        System.out.println("# Starting to load log: " + mapName);
         try {
             mapLogs.put(mapName, JsonManager.loadFromJson("data/" + Racing.PATH_TIMES + mapName + ".JSON",
                     MapLog.class));
             mapLogs.get(mapName).sort();
         } catch (IOException e) {
             if(!createOnFail) {
-                System.out.println("Error loading MapLog, player_finished");
+                System.out.println("# Error loading MapLog, player_finished");
                 return;
             }
-            System.out.println("Error loading MapLog for map, attempting to create it: " + mapName);
+            System.out.println("# Error loading MapLog for map, attempting to create it: " + mapName);
             MapLog ml = new MapLog(mapName);
             mapLogs.put(mapName, ml);
             saveMapLog(mapName);
         }
+        System.out.println("# Map Log Loaded: " + mapName);
     }
 
     /**
@@ -127,7 +129,7 @@ public class LogManager extends ServerEventListener {
             JsonManager.saveAsJson("data/" + Racing.PATH_TIMES + mapName + ".JSON", mapLogs.get(mapName));
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Unable to save MapLog for map: " + mapName);
+            System.out.println("# Unable to save MapLog for map: " + mapName);
         }
     }
 
@@ -202,8 +204,10 @@ public class LogManager extends ServerEventListener {
         }
 
         if(oldRank == -1) {
+            setRankingsUpdated(false);
             about = "took";
         } else if(newRank < oldRank) {
+            setRankingsUpdated(false);
             about = "rose to";
         } else {
             about = "remains at";
@@ -213,4 +217,11 @@ public class LogManager extends ServerEventListener {
 
     }
 
+    public boolean isRankingsUpdated() {
+        return isRankingsUpdated;
+    }
+
+    public void setRankingsUpdated(boolean isRankingsUpdated) {
+        this.isRankingsUpdated = isRankingsUpdated;
+    }
 }
