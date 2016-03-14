@@ -109,7 +109,7 @@ public class AFKKiller extends ServerEventListener {
         boolean hasStruck = afkPlayer.struckOut();
 
         if(receivedTick) {
-            Commands.PLAYER_MESSAGE(player, "Move faster noob. Strike " + afkPlayer.getStrikes() );
+            Commands.PLAYER_MESSAGE(player, "Move faster! Strike " + afkPlayer.getStrikes() );
         }
 
         if(hasStruck) {
