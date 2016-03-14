@@ -29,10 +29,10 @@ import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
 import com.tronner.servers.racing.lang.LColors;
-import com.tronner.servers.racing.logs.LogManager;
+import com.tronner.servers.racing.logs.Logger;
 import com.tronner.servers.racing.maps.MapManager;
-import com.tronner.servers.racing.players.PlayerManager;
-import com.tronner.servers.racing.rankings.RankingsManager;
+import com.tronner.servers.racing.players.PlayerTracker;
+import com.tronner.servers.racing.rankings.Rankings;
 import com.tronner.util.Crayola;
 
 import java.util.Arrays;
@@ -51,25 +51,15 @@ public class Racing extends ServerEventListener {
 
     public static final int MAP_PLAYS = 2;
 
-    private PlayerManager playerManager;
+    private PlayerTracker playerTracker;
 
     private RaceTimer timer;
 
-    private LogManager logger;
+    private Logger logger;
 
     private MapManager mapManager;
 
-    private RankingsManager rankingsManager;
-
-    private Map<String, String> jokesters = new HashMap<String, String>()
-    {{
-        put("rawrica@forums", "0x55bbff|0xffffffErica");
-        put("TJohnW@forums", "0xf0e090Tristan");
-        put("alekzander@forums", "0x779977|0xffffffEk");
-        put("Zwazi@aagid", "0x00ff88|0xffffffZwazi");
-    }};
-
-
+    private Rankings rankings;
 
     /**
      * Initializes all of the listeners
@@ -90,17 +80,17 @@ public class Racing extends ServerEventListener {
          * listeners.
          */
 
-        playerManager = new PlayerManager(); // Plan to make this PlayerManager and RacerManager extends PlayerManager
+        playerTracker = new PlayerTracker(); // Plan to make this PlayerManager and RacerManager extends PlayerManager
 
-        timer = new RaceTimer(playerManager);
+        timer = new RaceTimer(playerTracker);
 
-        logger = new LogManager(playerManager);
+        logger = new Logger(playerTracker);
 
-        mapManager = new MapManager(playerManager, logger, timer);
+        mapManager = new MapManager(playerTracker, logger, timer);
 
-        rankingsManager = new RankingsManager(playerManager, mapManager);
+        rankings = new Rankings(playerTracker, mapManager);
 
-        new AFKKiller(playerManager, timer);
+        new AFKKiller(playerTracker, timer);
 
         Parser.getInstance().reflectListeners(this);
 
@@ -122,48 +112,14 @@ public class Racing extends ServerEventListener {
     @Override
     public void ROUND_COMMENCING() {
         if(!logger.isRankingsUpdated())
-            rankingsManager.threadedUpdate();
+            rankings.threadedUpdate();
         logger.setRankingsUpdated(true);
     }
 
     @Override
     public void INVALID_COMMAND(String... args) {
         //[/q, TJohnW@forums, 76.185.188.37, -2, add, Telepo]
-        System.out.println(Arrays.toString(args));
-        if(args[0].equals("/r") && jokesters.containsKey(args[1])) {
-            String message = "";
-            for(int i = 4; i < args.length; i++) {
-                message += " " + args[i];
-            }
-
-            String reversed = new StringBuilder(message).reverse().toString();
-
-            Commands.CONSOLE_MESSAGE(jokesters.get(args[1]) + LColors.CHAT_COLOR + ": " + reversed);
-            for(String name: jokesters.keySet()) {
-                if(!name.equals(args[1])) {
-                    Commands.PLAYER_MESSAGE(name, "Jokes.us from " + jokesters.get(args[1]) + LColors.CHAT_COLOR + ":" + message);
-                }
-            }
-        } else if(args[0].equals("/clearplayers") && jokesters.containsKey(args[1])) {
-            playerManager.reset();
-        } else if(args[0].equals("/goto") && jokesters.containsKey(args[1]) && args.length > 4) {
-            try {
-                int indexToGo = Integer.parseInt(args[4]);
-                mapManager.getRotation().goTo(indexToGo);
-            } catch(NumberFormatException nfe) {
-
-            }
-        }
-        else if(args[0].equals("/crayola")) {
-            String out = "Crayola Colors: " + Crayola.colorList;
-            Commands.PLAYER_MESSAGE(args[1], out);
-        }
-        else if(args[0].equals("/resetMaps") && jokesters.containsKey(args[1])) {
-            mapManager.loadMaps();
-        }
-        else if(args[0].equals("/debug")) {
-            debug();
-        }
+        // Admin Commands
     }
 
 

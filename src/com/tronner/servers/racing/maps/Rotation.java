@@ -34,7 +34,7 @@ import java.util.List;
  *
  * @author TJohnW
  */
-public class Rotation implements RoundMapManager {
+public class Rotation implements RoundMapMethod {
 
     /**
      * The currentIndex in the rotation

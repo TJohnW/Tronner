@@ -26,7 +26,7 @@ package com.tronner.servers.racing.maps;
 
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
-import com.tronner.servers.racing.players.PlayerManager;
+import com.tronner.servers.racing.players.PlayerTracker;
 
 import java.util.LinkedList;
 
@@ -35,11 +35,11 @@ import java.util.LinkedList;
  *
  * @author TJohnW
  */
-public class Queue extends ServerEventListener implements RoundMapManager {
+public class Queue extends ServerEventListener implements RoundMapMethod {
 
     private MapManager mapManager;
 
-    private PlayerManager playerManager;
+    private PlayerTracker playerTracker;
 
     /**
      * True if the queue is active
@@ -59,10 +59,10 @@ public class Queue extends ServerEventListener implements RoundMapManager {
     /**
      * Creates a new Queue with the given MapManager
      */
-    public Queue(MapManager mm, PlayerManager pm) {
+    public Queue(MapManager mm, PlayerTracker pm) {
         Parser.getInstance().reflectListeners(this);
         mapManager = mm;
-        playerManager = pm;
+        playerTracker = pm;
     }
 
     /**
@@ -244,7 +244,7 @@ public class Queue extends ServerEventListener implements RoundMapManager {
     private void qAdd(String player, int accessLevel, String map) {
         if(!mapManager.validMap(map)) {
             // error no map found..
-        } else if(playerManager.playerFromID(player).getQueues() <= 0 && accessLevel > 0) {
+        } else if(playerTracker.playerFromID(player).getQueues() <= 0 && accessLevel > 0) {
             // error out of queues
         } else {
             // success

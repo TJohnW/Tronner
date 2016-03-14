@@ -27,8 +27,7 @@ package com.tronner.servers.racing;
 import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
-import com.tronner.servers.racing.logs.LogManager;
-import com.tronner.servers.racing.players.PlayerManager;
+import com.tronner.servers.racing.players.PlayerTracker;
 
 /**
  * Tronner - RaceTimer
@@ -41,12 +40,12 @@ public class RaceTimer extends ServerEventListener {
 
     private int timeLeft = 60;
 
-    private PlayerManager playerManager;
+    private PlayerTracker playerTracker;
     private boolean roundOver = false;
 
-    public RaceTimer(PlayerManager pm) {
+    public RaceTimer(PlayerTracker pm) {
         Parser.getInstance().reflectListeners(this);
-        playerManager = pm;
+        playerTracker = pm;
     }
 
     public int getTimeLeft() {
@@ -69,16 +68,16 @@ public class RaceTimer extends ServerEventListener {
         if(roundOver)
             return;
 
-        if((playerManager.playersFinished() > 0 || playerManager.playersRacing() < 2) && playerManager.playersRacing() > 0 && playerManager.playersStarted() > 1) {
+        if((playerTracker.playersFinished() > 0 || playerTracker.playersRacing() < 2) && playerTracker.playersRacing() > 0 && playerTracker.playersStarted() > 1) {
             timeLeft--;
             Commands.CENTER_MESSAGE(timeLeft + "                 ");
         }
 
-        if(timeLeft <= 0 || playerManager.playersRacing() < 1) {
-            if(playerManager.playersFinished() > 0)
-                playerManager.declareWinner();
+        if(timeLeft <= 0 || playerTracker.playersRacing() < 1) {
+            if(playerTracker.playersFinished() > 0)
+                playerTracker.declareWinner();
             else
-                playerManager.endRound();
+                playerTracker.endRound();
             roundOver = true;
         }
 

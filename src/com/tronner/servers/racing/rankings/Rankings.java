@@ -26,12 +26,12 @@ package com.tronner.servers.racing.rankings;
 
 import com.google.gson.reflect.TypeToken;
 import com.tronner.dispatcher.Commands;
-import com.tronner.servers.racing.logs.LogManager;
+import com.tronner.servers.racing.logs.Logger;
 import com.tronner.servers.racing.logs.MapLog;
 import com.tronner.servers.racing.logs.PlayerTime;
 import com.tronner.servers.racing.maps.MapManager;
 import com.tronner.servers.racing.maps.RacingMap;
-import com.tronner.servers.racing.players.PlayerManager;
+import com.tronner.servers.racing.players.PlayerTracker;
 import com.tronner.util.JsonManager;
 
 import java.io.IOException;
@@ -43,9 +43,9 @@ import java.util.*;
  *
  * @author Tristan on 8/29/2014.
  */
-public class RankingsManager {
+public class Rankings {
 
-    private LogManager logger; // This is only for reading rankings!
+    private Logger logger; // This is only for reading rankings!
 
     private MapManager mapManager;
 
@@ -60,8 +60,8 @@ public class RankingsManager {
         }
     };
 
-    public RankingsManager(PlayerManager playerManager, MapManager mapManager) {
-        logger = new LogManager(playerManager);
+    public Rankings(PlayerTracker playerTracker, MapManager mapManager) {
+        logger = new Logger(playerTracker);
         this.mapManager = mapManager;
         updateAll();
     }

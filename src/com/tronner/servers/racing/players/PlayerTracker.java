@@ -28,7 +28,7 @@ import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
 import com.tronner.servers.racing.lang.LRace;
-import com.tronner.servers.racing.logs.LogManager;
+import com.tronner.servers.racing.logs.Logger;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author Tristan on 8/7/2014.
  */
-public class PlayerManager extends ServerEventListener {
+public class PlayerTracker extends ServerEventListener {
 
     private List<Player> players = new ArrayList<>();
 
@@ -48,7 +48,7 @@ public class PlayerManager extends ServerEventListener {
     private int roundFinished = 0;
     private int roundRacers = 0;
 
-    public PlayerManager() {
+    public PlayerTracker() {
         Parser.getInstance().reflectListeners(this);
     }
 
@@ -124,7 +124,7 @@ public class PlayerManager extends ServerEventListener {
      * Called to notify all of the players of their current times
      * on each map
      */
-    public void notifyMapData(LogManager logger) {
+    public void notifyMapData(Logger logger) {
         for(Player p: players) {
             int totalRanks = logger.getCurrentLog().count();
             int rank = logger.getCurrentLog().getRank(p.getId());

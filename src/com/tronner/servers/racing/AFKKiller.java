@@ -27,7 +27,7 @@ package com.tronner.servers.racing;
 import com.tronner.dispatcher.Commands;
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
-import com.tronner.servers.racing.players.PlayerManager;
+import com.tronner.servers.racing.players.PlayerTracker;
 import com.tronner.util.TronLocation;
 
 import java.util.HashMap;
@@ -89,7 +89,7 @@ public class AFKKiller extends ServerEventListener {
 
     private Map<String, AFK> afkMap = new HashMap<>();
 
-    public AFKKiller(PlayerManager playerManager, RaceTimer rt) {
+    public AFKKiller(PlayerTracker playerTracker, RaceTimer rt) {
         Parser.getInstance().reflectListeners(this);
         this.raceTimer = rt;
     }

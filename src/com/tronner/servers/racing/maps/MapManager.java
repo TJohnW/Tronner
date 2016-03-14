@@ -29,9 +29,9 @@ import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
 import com.tronner.servers.racing.RaceTimer;
 import com.tronner.servers.racing.Racing;
-import com.tronner.servers.racing.logs.LogManager;
+import com.tronner.servers.racing.logs.Logger;
 import com.tronner.servers.racing.logs.PlayerTime;
-import com.tronner.servers.racing.players.PlayerManager;
+import com.tronner.servers.racing.players.PlayerTracker;
 import com.tronner.servers.racing.lang.LRace;
 import com.tronner.util.JsonManager;
 
@@ -47,9 +47,9 @@ import java.util.Map;
  */
 public class MapManager extends ServerEventListener {
 
-    private LogManager logger;
+    private Logger logger;
 
-    private PlayerManager playerManager;
+    private PlayerTracker playerTracker;
 
     private RaceTimer raceTimer;
 
@@ -64,18 +64,18 @@ public class MapManager extends ServerEventListener {
 
     private Rotation rotation = new Rotation(this);
 
-    private RoundMapManager currentManager = rotation;
+    private RoundMapMethod currentManager = rotation;
     private int plays = -1;
 
 
     /**
      * Creates the MapManager and loads the maps
      */
-    public MapManager(PlayerManager pm, LogManager lm, RaceTimer rt) {
+    public MapManager(PlayerTracker pm, Logger lm, RaceTimer rt) {
         Parser.getInstance().reflectListeners(this);
         queue = new Queue(this, pm);
         logger = lm;
-        playerManager = pm;
+        playerTracker = pm;
         raceTimer = rt;
     }
 
@@ -96,7 +96,7 @@ public class MapManager extends ServerEventListener {
         return maps.get(map);
     }
 
-    public void setCurrentManager(RoundMapManager manager) {
+    public void setCurrentManager(RoundMapMethod manager) {
         if(manager.isActive())
             currentManager = manager;
         else
@@ -189,7 +189,7 @@ public class MapManager extends ServerEventListener {
             return;
 
         if(time == -3) {
-            playerManager.notifyMapData(logger);
+            playerTracker.notifyMapData(logger);
             if(logger.getCurrentLog().count() > 0) {
                 String out = LRace.MAP_DATA_TOP.parse(currentMap.getName());
                 for(int i = 0; i < 3; i++) {

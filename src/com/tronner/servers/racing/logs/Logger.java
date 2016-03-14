@@ -26,7 +26,7 @@ package com.tronner.servers.racing.logs;
 
 import com.tronner.parser.Parser;
 import com.tronner.parser.ServerEventListener;
-import com.tronner.servers.racing.players.PlayerManager;
+import com.tronner.servers.racing.players.PlayerTracker;
 import com.tronner.servers.racing.Racing;
 import com.tronner.servers.racing.lang.LRace;
 import com.tronner.util.JsonManager;
@@ -41,19 +41,19 @@ import java.util.Map;
  *
  * @author TJohnW
  */
-public class LogManager extends ServerEventListener {
+public class Logger extends ServerEventListener {
 
     private Map<String, MapLog> mapLogs = new HashMap<>();
 
     private MapLog currentLog;
 
-    private PlayerManager playerManager;
+    private PlayerTracker playerTracker;
 
     private boolean isRankingsUpdated = true;
 
-    public LogManager(PlayerManager pm) {
+    public Logger(PlayerTracker pm) {
         Parser.getInstance().reflectListeners(this);
-        this.playerManager = pm;
+        this.playerTracker = pm;
     }
 
     /**
@@ -172,10 +172,10 @@ public class LogManager extends ServerEventListener {
                                         String playerId, float playerX, float playerY, float playerXDir,
                                         float playerYDir, float time) {
 
-        if(currentLog == null || playerManager.playerFromID(playerId).isFinished())
+        if(currentLog == null || playerTracker.playerFromID(playerId).isFinished())
             return;
 
-        playerManager.setFinished(playerId);
+        playerTracker.setFinished(playerId);
 
         int oldRank = currentLog.getRank(playerId);
         PlayerTime pt = new PlayerTime(playerId, time);

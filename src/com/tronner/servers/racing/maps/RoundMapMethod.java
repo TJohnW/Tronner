@@ -29,7 +29,7 @@ package com.tronner.servers.racing.maps;
  *
  * @author TJohnW
  */
-public interface RoundMapManager {
+public interface RoundMapMethod {
 
     /**
      * Returns if this is active or available for use
